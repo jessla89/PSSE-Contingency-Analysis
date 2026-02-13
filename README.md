@@ -1,1 +1,1 @@
-In this repository python programs are developed to export PSSE contingency solution in excel format. The exported solutions are then analysed to extract the branch overload and bus voltage range violations
+In this repository python programs are developed to conduct AC contingency calculation and to export AC contingency solution output file as excel is given. The exported solutions are then analysed to extract the branch overload and bus voltage range violations. 
