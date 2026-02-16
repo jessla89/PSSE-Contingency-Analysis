@@ -1,0 +1,1505 @@
+\documentclass{report}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=1.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage[list=true,listformat=simple]{subcaption}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{pifont}
+\usepackage{lscape}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{array}
+\usepackage{float}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pythonhighlight}
+
+\setcounter{secnumdepth}{4}
+\makeatletter
+\setlength\@fptop{0pt}             % default: '0\p@ \@plus 1fil'
+\setlength\@fpsep{2\baselineskip}  % default: '8\p@ \@plus 2fil'
+\makeatother
+
+
+% Title Page
+\title{PSSE Contingency Analysis}
+\author{Jessla Varaparambil Abdul Kadher}
+\begin{document}
+\maketitle
+
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\newpage
+
+\chapter{Introduction}
+
+\section{Study Description}
+
+The Year 2 Topology 2 contingency analysis of the hypothetical SAVNW system is carried out to report the branches reporting loading greater than 100\% and buses reporting upper and lower voltage limit violations. 
+
+\begin{figure}[h!]
+   \centering 
+   \includegraphics[scale=0.5]{y1t1}
+   \caption{System Topology Year 2, Topology 2} 
+   \label{fig:y1t1}
+\end{figure}
+
+For the hypothetical SAVNW system, in year 2, there are 7 generators available in 3 areas. In year 2, the load in all areas increases for the three forecasted scenarios. There are no new resources coming online and hence resources and correspondingly the installed capacity remains the same. A solar farm with an installed capacity of 117 MW was added in Year 1, similar to the analysis carried out for Year 1, solar generators intermittent behaviour is studied by considering 3 Solar output cases. A 0 MW output case is considered when there is no output from solar farm along with an average expected output of 50 MW and a maximum expected output of 100 MW. For Year 2, Topology 2, in addition to the three generation scenarios, three forecasted load scenarios are also studied. 
+
+Detailed analysis of Year 2 Topology 2 Base Case was carried out. Analysis of system totals by area, generator contributions to each scenario and the considered load scenarios can be found \href{https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Data-Extraction/blob/main/Area_totals_Topology_2.html}{here}. The overload and voltage violations can be found \href{https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Data-Extraction/blob/main/limit_checking_Topology_2.html}{here}.
+
+\section{Contingency Analysis}
+
+AC contingency calculation was conducted on the hypothetical SAVNW system for 9 different scenarios and hence on 9 different case files corresponding to Topology 2. The same configuration files are used for the 9 scenarios and are:
+\begin{itemize}
+\item Subsystem file savnw.sub - Studied subsystems of the studied scenario/ case are defined via the Subsystem Definition data file (Figure ~\ref{fig:sub})
+\item Monitor file savnw.mon - Monitored Element Data File identifies the branches that are to be monitored for flow violations and the buses that are to be monitored for voltage violations (Figure ~\ref{fig:mon})
+\item  Contingency file savnw.con - Contingency cases that are to be tested are defined in the Contingency Definition data file (Figure ~\ref{fig:con})
+\end{itemize}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.6]{sub.png}
+   \caption{The subsystem file corresponding to Year 2 Topology 2} 
+   \label{fig:sub}
+\end{figure}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.6]{mon.png}
+   \caption{The monitored file corresponding to Year 2 Topology 2} 
+   \label{fig:mon}
+\end{figure}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.6]{con.png}
+   \caption{The contingency file corresponding to Year 2 Topology 2} 
+   \label{fig:con}
+\end{figure}
+
+
+For each of the 9 studied scenarios, the API DFAX\_2 is used to construct 9 different distribution factor data files corresponding to each .sav file, and the above defined .sub, .mon, .con configuration files.
+For each of the 9 scenarios, by running the AC contingency calculation function ACCC\_WITH\_DSP\_3, the contingency solution output .acc files are obtained.
+
+Python code to conduct AC contingency calculation is:
+
+\begin{python}
+import psspy
+list_gens = [0,50,100]
+list_lsc = ['lls','rls','hls']
+for gen in list_gens:
+    for lsc in list_lsc:
+        file_in = 'sav\savnw_sol_' + str(gen) +'_'+ lsc +'.sav'
+        file_dist = 'savnw_sol_' + str(gen) +'_'+ lsc + '.dfx'
+        file_out = 'savnw_sol_' + str(gen) +'_'+ lsc + '.acc'
+        file_sav = r"{}".format(file_in)
+        file_dfx = r"{}".format(file_dist)
+        file_acc = r"{}".format(file_out)
+        psspy.case(file_in)
+        psspy.fdns([0,1,0,0,0,0,0,0])
+        psspy.dfax_2([1,1,0],r"""savnw.sub""",r"""savnw.mon""",r"""savnw.con""",file_dfx)
+        psspy.accc_with_dsp_3(0.1,[0,1,0,0,0,0,0,0,0,0,0],"",file_dfx,file_acc,"","","")
+\end{python}
+
+For each of the 9 scenarios, using the contingency solution output files, the results are exported as excel files for further analysis. The results exported are ACCC Analysis Summary, Monitored Branch Flows (MVA), Monitored Bus Voltages. 
+
+Python code to export AC contingency solution output file as excel is: 
+
+\begin{python}
+import psspy
+import pssexcel
+list_gens = [0,50,100]
+list_lsc = ['lls','rls','hls']
+for gen in list_gens:
+    for lsc in list_lsc:
+        file_in = 'acc\savnw_sol_' + str(gen) +'_'+ lsc + '.acc'
+        file_out = 'savnw_sol_' + str(gen) +'_'+ lsc + '.xlsx'
+        file_acc = r"{}".format(file_in)
+        file_xlsx = r"{}".format(file_out)
+        pssexcel.accc(file_acc, ['s','v','g','l','b','i','n','w'], colabel='',stype='contingency', busmsm=0.5, sysmsm=5.0,
+                       rating='a', namesplit=False,xlsfile=file_out, sheet='', overwritesheet=True, show=False, ratecon='b',
+                       baseflowvio=True,basevoltvio=True, flowlimit=100.0, flowchange=0.0, voltchange=0.0,swdrating='a',
+                       swdratecon='b',baseswdflowvio=False,basenodevoltvio=False,overloadreport=False)
+\end{python}
+
+Contingency analysis was carried out in PSSE for each of the studied scenario for Year 2 Topology 2. It was seen that the power flow solution did not converge for some of the tested contingencies for the studied scenario. 
+
+For each of the scenario, the contingencies for which power flow solution did not converge are:
+\begin{itemize}
+\item Solar = 0 MW, LLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 152, BUS 201, BUS 151
+\end{itemize}
+\item Solar = 0 MW, RLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 152, BUS 202, BUS 201, SING OPN LIN   10 201-205(\&1), BUS 151
+\end{itemize}
+\item Solar = 0 MW, HLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 151, BUS 152, BUS 202, BUS 205, BUS 201, SING OPN LIN   10 201-205(\&1)
+\end{itemize}
+\item Solar = 50 MW, LLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 152, BUS 201, BUS 151
+\end{itemize}
+\item Solar = 50 MW, RLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 152, BUS 202, BUS 201, BUS 151
+\end{itemize}
+\item Solar = 50 MW, HLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 152, BUS 202, BUS 201, SING OPN LIN   10 201-205(\&1), BUS 151
+\end{itemize}
+\item Solar = 100 MW, LLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 152, BUS 201
+\end{itemize}
+\item Solar = 100 MW, RLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 152, SING OPN LIN   12 202-203(1), BUS 201, BUS 151
+\end{itemize}
+\item Solar = 100 MW, HLS
+\begin{itemize}
+\item BUS 154, UNIT 206(1), SING OPN LIN   15 205-206(1), BUS 151, BUS 152, BUS 202, BUS 201, BUS 153, SING OPN LIN   10 201-205(\&1)
+\end{itemize}
+\end{itemize}
+
+For the converged contingencies for each of the studied scenario, the results of the contingency analysis were analysed to check for branch overload ($ > 100\%$) and out of range bus voltage violations (lower emergency limit $ < 0.9 PU $ and upper emergency limit $ > 1.1 PU$). It was seen that for some of the contingencies there were no branch overload or bus voltage violations reported. Rest of the contingencies violating branch overload and bus voltage emergency ranges are reported in the subsequent chapters. Chapter ~\ref{overload} of this document gives the observed branch flow violations for each of the studied scenario. Chapter ~\ref{lower} gives the lower voltage violations reported for each of the studied scenarios. Chapter ~\ref{upper} gives the upper voltage violations reported for each of the studied scenarios. To conclude, Chapter ~\ref{conclusion} summarises the result of the contingency analysis carried out on Year 2, Topology 2 of the hypothetical SAVNW system. 
+
+\chapter{Branch Overload Violation}
+\label{overload}
+\section{Introduction}
+In this chapter, for each of the studied scenario, the branches that are loaded more than 100\% of their rating is tabulated. Branches that are loaded more than 130\% of the rating are said to be severely/ critically loaded and are noted down for reporting as operating these branches for prolonged duration is not recommended for a safe and reliable power system.
+\section{Solar = 0 MW, LLS}
+
+For the studied scenario Solar = 0 MW, LLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 154-203(1) for the bus fault contingency BUS 205, and 
+for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 568.21 & 550.82 & 300.00 & 183.61 \\
+205-206(1) & UNIT 211(1) & -1254.04 & 1254.04 & 1250.00 & 100.32 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 0 MW, LLS}
+\label{unitSolar0MWLLS}
+\end{table}
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+153-154(1) & BUS 203 & -354.82 & 364.36 & 350.00 & 104.10 \\
+153-154(1) & BUS 205 & -321.80 & 375.90 & 350.00 & 107.40 \\
+154-203(1) & BUS 205 & 298.02 & 348.12 & 250.00 & 139.25 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 0 MW, LLS}
+\label{busSolar0MWLLS}
+\end{table}
+
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 568.21 & 550.82 & 300.00 & 183.61 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 673.45 & 695.29 & 660.00 & 105.35 \\
+153-154(1) & SING OPN LIN   10 201-205(\&1) & -323.74 & 351.60 & 350.00 & 100.46 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1254.02 & 1254.02 & 1250.00 & 100.32 \\
+153-154(1) & SING OPN LIN   12 202-203(1) & -356.48 & 366.37 & 350.00 & 104.68 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 0 MW, LLS}
+\label{singleSolar0MWLLS}
+\end{table}
+
+
+\section{Solar = 0 MW, RLS}
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 627.03 & 609.75 & 300.00 & 203.25 \\
+101-151(1) & UNIT 102(1) & 1392.86 & 1392.86 & 1350.00 & 103.17 \\
+205-206(1) & UNIT 211(1) & -1354.36 & 1354.36 & 1250.00 & 108.35 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 0 MW, RLS}
+\label{unitSolar0MWRLS}
+\end{table}
+
+For the studied scenario Solar = 0 MW, RLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 154-203(1) for the bus fault contingency BUS 205, and for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+154-205(1) & BUS 153 & 663.84 & 685.81 & 660.00 & 103.91 \\
+153-154(1) & BUS 203 & -365.21 & 375.91 & 350.00 & 107.40 \\
+153-154(1) & BUS 205 & -340.35 & 422.93 & 350.00 & 120.84 \\
+153-154(2) & BUS 205 & -284.46 & 353.49 & 350.00 & 101.00 \\
+154-203(1) & BUS 205 & 312.36 & 388.16 & 250.00 & 155.26 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 0 MW, RLS}
+\label{busSolar0MWRLS}
+\end{table}
+
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 627.03 & 609.75 & 300.00 & 203.25 \\
+101-151(1) & SING OPN LIN   2 102-151(1) & 1392.86 & 1392.86 & 1350.00 & 103.17 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 723.61 & 781.67 & 660.00 & 118.44 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1354.33 & 1354.33 & 1250.00 & 108.35 \\
+153-154(1) & SING OPN LIN   12 202-203(1) & -376.44 & 418.62 & 350.00 & 119.61 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 0 MW, RLS}
+\label{singleSolar0MWRLS}
+\end{table}
+
+
+\section{Solar = 0 MW, HLS}
+
+For the studied scenario Solar = 0 MW, HLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1), and for the branch 153-154(1) for single line open contingency SING OPN LIN   12 202-203(1).
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 674.40 & 657.66 & 300.00 & 219.22 \\
+101-151(1) & UNIT 102(1) & 1443.42 & 1443.42 & 1350.00 & 106.92 \\
+205-206(1) & UNIT 211(1) & -1443.25 & 1443.25 & 1250.00 & 115.46 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 0 MW, HLS}
+\label{unitSolar0MWHLS}
+\end{table}
+
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+154-205(1) & BUS 153 & 695.96 & 764.15 & 660.00 & 115.78 \\
+153-154(1) & BUS 203 & -378.61 & 411.10 & 350.00 & 117.46 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 0 MW, HLS}
+\label{busSolar0MWHLS}
+\end{table}
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 674.40 & 657.66 & 300.00 & 219.22 \\
+101-151(1) & SING OPN LIN   2 102-151(1) & 1443.42 & 1443.42 & 1350.00 & 106.92 \\
+154-203(1) & SING OPN LIN   6 152-153(1) & 233.82 & 264.84 & 250.00 & 105.94 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 755.37 & 855.60 & 660.00 & 129.64 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1443.22 & 1443.22 & 1250.00 & 115.46 \\
+153-154(1) & SING OPN LIN   12 202-203(1) & -396.48 & 475.16 & 350.00 & 135.76 \\
+153-154(2) & SING OPN LIN   12 202-203(1) & -331.30 & 397.04 & 350.00 & 113.44 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 0 MW, HLS}
+\label{singleSolar0MWHLS}
+\end{table}
+
+
+\section{Solar = 50 MW, LLS}
+
+
+For the studied scenario Solar = 50 MW, LLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 154-203(1) for the bus fault contingency BUS 205, and for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 534.00 & 516.97 & 300.00 & 172.32 \\
+205-206(1) & UNIT 211(1) & -1250.92 & 1250.92 & 1250.00 & 100.07 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 50 MW, LLS}
+\label{unitSolar50MWLLS}
+\end{table}
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+153-154(1) & BUS 203 & -344.85 & 353.94 & 350.00 & 101.13 \\
+153-154(1) & BUS 205 & -309.48 & 356.77 & 350.00 & 101.93 \\
+154-203(1) & BUS 205 & 285.18 & 328.75 & 250.00 & 131.50 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 50 MW, LLS}
+\label{busSolar50MWLLS}
+\end{table}
+
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 534.00 & 516.97 & 300.00 & 172.32 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 639.51 & 660.04 & 660.00 & 100.01 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1250.90 & 1250.90 & 1250.00 & 100.07 \\
+153-154(1) & SING OPN LIN   12 202-203(1) & -346.36 & 355.80 & 350.00 & 101.66 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 50 MW, LLS}
+\label{singleSolar50MWLLS}
+\end{table}
+
+
+\section{Solar = 50 MW, RLS}
+
+For the studied scenario Solar = 50 MW, RLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 154-203(1) for the bus fault contingency BUS 205, and for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 592.19 & 574.97 & 300.00 & 191.66 \\
+205-206(1) & UNIT 211(1) & -1349.51 & 1349.51 & 1250.00 & 107.96 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 50 MW, RLS}
+\label{unitSolar50MWRLS}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+153-154(1) & BUS 203 & -354.87 & 365.07 & 350.00 & 104.30 \\
+153-154(1) & BUS 205 & -328.34 & 400.13 & 350.00 & 114.32 \\
+154-203(1) & BUS 205 & 299.81 & 365.36 & 250.00 & 146.14 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 50 MW, RLS}
+\label{busSolar50MWRLS}
+\end{table}
+
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 592.19 & 574.97 & 300.00 & 191.66 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 699.80 & 741.98 & 660.00 & 112.42 \\
+153-154(1) & SING OPN LIN   10 201-205(\&1) & -333.09 & 398.59 & 350.00 & 113.88 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1349.48 & 1349.48 & 1250.00 & 107.96 \\
+153-154(1) & SING OPN LIN   12 202-203(1) & -365.15 & 402.03 & 350.00 & 114.87 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 50 MW, RLS}
+\label{singleSolar50MWRLS}
+\end{table}
+
+
+\section{Solar = 50 MW, HLS}
+
+For the studied scenario Solar = 50 MW, HLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 154-203(1) for the bus fault contingency BUS 205, and for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 639.16 & 622.20 & 300.00 & 207.40 \\
+101-151(1) & UNIT 102(1) & 1389.59 & 1389.59 & 1350.00 & 102.93 \\
+205-206(1) & UNIT 211(1) & -1436.96 & 1436.96 & 1250.00 & 114.96 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 50 MW, HLS}
+\label{unitSolar50MWHLS}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+154-205(1) & BUS 153 & 665.83 & 723.35 & 660.00 & 109.60 \\
+153-154(1) & BUS 203 & -365.88 & 384.41 & 350.00 & 109.83 \\
+153-154(1) & BUS 205 & -343.50 & 446.25 & 350.00 & 127.50 \\
+153-154(2) & BUS 205 & -287.09 & 372.97 & 350.00 & 106.56 \\
+154-203(1) & BUS 205 & 311.99 & 405.32 & 250.00 & 162.13 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 50 MW, HLS}
+\label{busSolar50MWHLS}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 639.16 & 622.20 & 300.00 & 207.40 \\
+101-151(1) & SING OPN LIN   2 102-151(1) & 1389.59 & 1389.59 & 1350.00 & 102.93 \\
+154-203(1) & SING OPN LIN   6 152-153(1) & 226.44 & 254.08 & 250.00 & 101.63 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 728.09 & 816.96 & 660.00 & 123.78 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1436.93 & 1436.93 & 1250.00 & 114.95 \\
+153-154(1) & SING OPN LIN   12 202-203(1) & -384.99 & 453.27 & 350.00 & 129.51 \\
+153-154(2) & SING OPN LIN   12 202-203(1) & -321.76 & 378.83 & 350.00 & 108.24 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 50 MW, HLS}
+\label{singleSolar50MWHLS}
+\end{table}
+
+
+\section{Solar = 100 MW, LLS}
+
+For the studied scenario Solar = 100 MW, LLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branches 3001-3003(1), 3003-3005(1), 3003-3005(2) for the bus fault contingency BUS 151, and for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 499.74 & 483.23 & 300.00 & 161.08 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 100 MW, LLS}
+\label{unitSolar100MWLLS}
+\end{table}
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & BUS 151 & 1010.31 & 1012.90 & 300.00 & 337.63 \\
+3001-3011(1) & BUS 151 & -1577.98 & 1577.98 & 1560.00 & 101.15 \\
+3003-3005(1) & BUS 151 & -482.53 & 506.46 & 350.00 & 144.70 \\
+3003-3005(2) & BUS 151 & -482.53 & 506.46 & 350.00 & 144.70 \\
+3005-3007(1) & BUS 151 & -345.44 & 368.55 & 350.00 & 105.30 \\
+154-203(1) & BUS 205 & 273.03 & 312.11 & 250.00 & 124.84 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 100 MW, LLS}
+\label{busSolar100MWLLS}
+\end{table}
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 499.74 & 483.23 & 300.00 & 161.08 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 100 MW, LLS}
+\label{singleSolar100MWLLS}
+\end{table}
+
+
+\section{Solar = 100 MW, RLS}
+
+For the studied scenario Solar = 100 MW, RLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 154-203(1) for the bus fault contingency BUS 205, and for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 557.59 & 540.63 & 300.00 & 180.21 \\
+205-206(1) & UNIT 211(1) & -1346.10 & 1346.10 & 1250.00 & 107.69 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 100 MW, RLS}
+\label{unitSolar100MWRLS}
+\end{table}
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+153-154(1) & BUS 202 & -317.48 & 381.59 & 350.00 & 109.03 \\
+153-154(1) & BUS 203 & -344.66 & 354.44 & 350.00 & 101.27 \\
+153-154(1) & BUS 205 & -317.10 & 381.88 & 350.00 & 109.11 \\
+154-203(1) & BUS 205 & 288.07 & 346.92 & 250.00 & 138.77 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 100 MW, RLS}
+\label{busSolar100MWRLS}
+\end{table}
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 557.60 & 540.64 & 300.00 & 180.21 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 680.02 & 703.31 & 660.00 & 106.56 \\
+153-154(1) & SING OPN LIN   10 201-205(\&1) & -322.12 & 377.58 & 350.00 & 107.88 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1346.08 & 1346.08 & 1250.00 & 107.69 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 100 MW, RLS}
+\label{singleSolar100MWRLS}
+\end{table}
+
+
+\section{Solar = 100 MW, HLS}
+
+For the studied scenario Solar = 100 MW, HLS, loading greater than 130\% were reported for the branch 3001-3003(1) for the unit fault contingency UNIT 101(1), for the branch 154-203(1) for the bus fault contingency BUS 205, and for the branch 3001-3003(1) for single line open contingency SING OPN LIN   1 101-151(1).
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & UNIT 101(1) & 604.21 & 587.25 & 300.00 & 195.75 \\
+205-206(1) & UNIT 211(1) & -1432.52 & 1432.52 & 1250.00 & 114.60 \\
+\bottomrule
+\end{tabular}}
+\caption{Unit faults reporting branch flow greater than 100\% for scenario Solar = 100 MW, HLS}
+\label{unitSolar100MWHLS}
+\end{table}
+
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+153-154(1) & BUS 203 & -352.77 & 363.46 & 350.00 & 103.84 \\
+153-154(1) & BUS 205 & -332.69 & 424.49 & 350.00 & 121.28 \\
+153-154(2) & BUS 205 & -278.16 & 354.91 & 350.00 & 101.40 \\
+154-203(1) & BUS 205 & 300.68 & 383.65 & 250.00 & 153.46 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting branch flow greater than 100\% for scenario Solar = 100 MW, HLS}
+\label{busSolar100MWHLS}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Branch & Contingency & MVA Flow & AMP Flow & Rate & Loading \\
+\midrule
+3001-3003(1) & SING OPN LIN   1 101-151(1) & 604.21 & 587.25 & 300.00 & 195.75 \\
+154-205(1) & SING OPN LIN   6 152-153(1) & 702.59 & 783.59 & 660.00 & 118.73 \\
+205-206(1) & SING OPN LIN   11 201-211(1) & -1432.49 & 1432.49 & 1250.00 & 114.60 \\
+153-154(1) & SING OPN LIN   12 202-203(1) & -374.34 & 436.08 & 350.00 & 124.59 \\
+153-154(2) & SING OPN LIN   12 202-203(1) & -312.93 & 364.55 & 350.00 & 104.16 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting branch flow greater than 100\% for scenario Solar = 100 MW, HLS}
+\label{singleSolar100MWHLS}
+\end{table}
+
+
+\section{Results Summary}
+
+The Table ~\ref{sum_load} summarises the results of the AC contingency calculation carried out on the hypothetical SAVNW system for Topology 2 for branch overload violations, by tabulating the summary of branch load violation grouped by scenario and contingency to give the branches overloaded and count of the branches overloaded for each of the grouped scenario and contingency. 
+
+It can be seen that the scenario and contingency for which system is most overloaded is the scenario Solar = 100 MW, LLS and bus fault BUS 151, resulting in 5 branch load violations. The table gives the branch overload violation count in descending order, and as can be seen the scenarios with the greatest number of violations grouped by Scenario and contingency followed by Solar = 100 MW, LLS \& BUS 151 are the Solar = 0 MW, RLS \& BUS 205, Solar = 100 MW, HLS \& BUS 205, and Solar = 50 MW, HLS \& BUS 205 with 3 violations each. 
+
+As can be seen from the Appendix, Table ~\ref{scen_overload_cont}, the contingency causing the most number of overload violations is due to the bus fault BUS 205 with 18 reported violations, followed by the single line open contingencies SING OPN LIN 6 152-153(1) and SING OPN LIN 12 202-203(1) reporting 10 violations each. The unit fault contingency causing the most number of overload violation is the UNIT 101(1) with 9 violations. The complete counts of contingency causing overload violations is given in Table ~\ref {scen_overload_cont}. 
+
+The branch reporting the most number of violations is the branch153-154(1), which reported 26 loading violation followed by 3001-3003(1) reporting 19 violations, and 205-206(1) with 16 violations. The complete counts of each of the branch reporting overloads are given in Table ~\ref{scen_overload_bran}.
+
+Out of all the studied scenarios, the scenario reporting the most number of violation is the scenario Solar = 50 MW, HLS with 15 violations, followed by Solar = 0 MW, RLS with 13 and, Solar = 0 MW, HLS  with 12 loading violations. The complete counts of scenarios reporting overload violations is given in Table ~\ref {scen_overload_scen}. 
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.67}{\begin{tabular}{lllr}
+\toprule
+Scenario & Contingency & Branches & Branch Count \\
+\midrule
+Solar = 100 MW, LLS & BUS 151 & 3001-3003(1),3001-3011(1),3003-3005(1),3003-3005(2),3005-3007(1) & 5 \\
+Solar = 0 MW, RLS & BUS 205 & 153-154(1),154-203(1) & 3 \\
+Solar = 100 MW, HLS & BUS 205 & 153-154(1),154-203(1) & 3 \\
+Solar = 50 MW, HLS & BUS 205 & 153-154(1),154-203(1) & 3 \\
+Solar = 50 MW, RLS & BUS 205 & 153-154(1),154-203(1) & 2 \\
+Solar = 100 MW, HLS & SING OPN LIN   12 202-203(1) & 153-154(1) & 2 \\
+Solar = 50 MW, HLS & SING OPN LIN   12 202-203(1) & 153-154(1) & 2 \\
+Solar = 50 MW, HLS & SING OPN LIN   6 152-153(1) & 154-203(1),154-205(1) & 2 \\
+Solar = 50 MW, LLS & BUS 205 & 153-154(1),154-203(1) & 2 \\
+Solar = 0 MW, LLS & BUS 205 & 153-154(1),154-203(1) & 2 \\
+Solar = 100 MW, RLS & BUS 205 & 153-154(1),154-203(1) & 2 \\
+Solar = 0 MW, HLS & SING OPN LIN   6 152-153(1) & 154-203(1),154-205(1) & 2 \\
+Solar = 0 MW, HLS & SING OPN LIN   12 202-203(1) & 153-154(1) & 2 \\
+Solar = 50 MW, RLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 100 MW, RLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 100 MW, RLS & SING OPN LIN   10 201-205(\&1) & 153-154(1) & 1 \\
+Solar = 100 MW, RLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 50 MW, RLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 100 MW, RLS & SING OPN LIN   6 152-153(1) & 154-205(1) & 1 \\
+Solar = 100 MW, RLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 100 MW, RLS & UNIT 211(1) & 205-206(1) & 1 \\
+Solar = 50 MW, RLS & SING OPN LIN   6 152-153(1) & 154-205(1) & 1 \\
+Solar = 50 MW, HLS & BUS 153 & 154-205(1) & 1 \\
+Solar = 50 MW, HLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 50 MW, RLS & SING OPN LIN   12 202-203(1) & 153-154(1) & 1 \\
+Solar = 50 MW, HLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 50 MW, HLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 50 MW, RLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 50 MW, HLS & SING OPN LIN   2 102-151(1) & 101-151(1) & 1 \\
+Solar = 50 MW, RLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 50 MW, HLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 50 MW, HLS & UNIT 102(1) & 101-151(1) & 1 \\
+Solar = 50 MW, HLS & UNIT 211(1) & 205-206(1) & 1 \\
+Solar = 100 MW, RLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 50 MW, LLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 50 MW, RLS & SING OPN LIN   10 201-205(\&1) & 153-154(1) & 1 \\
+Solar = 50 MW, LLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 50 MW, LLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 50 MW, LLS & SING OPN LIN   12 202-203(1) & 153-154(1) & 1 \\
+Solar = 50 MW, LLS & SING OPN LIN   6 152-153(1) & 154-205(1) & 1 \\
+Solar = 50 MW, LLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 50 MW, LLS & UNIT 211(1) & 205-206(1) & 1 \\
+Solar = 0 MW, HLS & BUS 153 & 154-205(1) & 1 \\
+Solar = 100 MW, LLS & BUS 205 & 154-203(1) & 1 \\
+Solar = 100 MW, RLS & BUS 202 & 153-154(1) & 1 \\
+Solar = 0 MW, LLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 0 MW, LLS & UNIT 211(1) & 205-206(1) & 1 \\
+Solar = 0 MW, LLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 0 MW, LLS & SING OPN LIN   6 152-153(1) & 154-205(1) & 1 \\
+Solar = 0 MW, LLS & SING OPN LIN   12 202-203(1) & 153-154(1) & 1 \\
+Solar = 0 MW, LLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 0 MW, LLS & SING OPN LIN   10 201-205(\&1) & 153-154(1) & 1 \\
+Solar = 0 MW, LLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 0 MW, RLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 0 MW, HLS & UNIT 211(1) & 205-206(1) & 1 \\
+Solar = 0 MW, HLS & UNIT 102(1) & 101-151(1) & 1 \\
+Solar = 0 MW, HLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 0 MW, HLS & SING OPN LIN   2 102-151(1) & 101-151(1) & 1 \\
+Solar = 0 MW, HLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 0 MW, HLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 0 MW, RLS & BUS 153 & 154-205(1) & 1 \\
+Solar = 0 MW, RLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 100 MW, LLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 100 MW, HLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 100 MW, LLS & SING OPN LIN   1 101-151(1) & 3001-3003(1) & 1 \\
+Solar = 0 MW, HLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 100 MW, HLS & UNIT 211(1) & 205-206(1) & 1 \\
+Solar = 100 MW, HLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 100 MW, HLS & SING OPN LIN   6 152-153(1) & 154-205(1) & 1 \\
+Solar = 100 MW, HLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 100 MW, HLS & BUS 203 & 153-154(1) & 1 \\
+Solar = 0 MW, RLS & SING OPN LIN   11 201-211(1) & 205-206(1) & 1 \\
+Solar = 0 MW, RLS & UNIT 211(1) & 205-206(1) & 1 \\
+Solar = 0 MW, RLS & UNIT 102(1) & 101-151(1) & 1 \\
+Solar = 0 MW, RLS & UNIT 101(1) & 3001-3003(1) & 1 \\
+Solar = 0 MW, RLS & SING OPN LIN   6 152-153(1) & 154-205(1) & 1 \\
+Solar = 0 MW, RLS & SING OPN LIN   2 102-151(1) & 101-151(1) & 1 \\
+Solar = 0 MW, RLS & SING OPN LIN   12 202-203(1) & 153-154(1) & 1 \\
+Solar = 50 MW, RLS & UNIT 211(1) & 205-206(1) & 1 \\
+\bottomrule
+\end{tabular}}
+\caption{Summary of Branch Overload grouped by Scenario and Contingency}
+\label{sum_load}
+\end{table}
+
+
+
+\chapter{Upper Emergency Bus Voltage Violation}
+\label{upper}
+\section{Introduction}
+In this chapter the upper voltage limit violations are reported by bus faults, unit faults and single line faults for each of the studied scenario.
+The violations are reported in tabular format, and in the reported table, Base Voltage is PU base case voltage, Contingency Voltage is PU contingency case voltage, Deviation is difference between contingency case and base case voltage, Range Violation is range violations calculated as Contingency Voltage - maximum range limit (1.1 PU for the upper emergency range).
+It was seen that for Topology 1, Solar = 0 MW, HLS, Solar = 100 MW, HLS, Solar = 50 MW, RLS, Solar = 100 MW, LLS, Solar = 0 MW, LLS, Solar = 0 MW, RLS, Solar = 50 MW, LLS did not report any upper voltage limit violations.
+It was seen that for Topology 1, only the scenarios, Solar = 50 MW, HLS, Solar = 100 MW, RLS reported upper voltage limit violations.
+\section{Solar = 50 MW, HLS}
+
+For the studied scenario Solar = 50 MW, HLS, the bus violating the upper voltage limit is the bus 211 for the bus fault BUS 205.
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+211 & BUS 205 & 1.03 & 1.11 & 0.08 & 0.06 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages greater than emergency voltage of 1.1 PU for scenario Solar = 50 MW, HLS}
+\label{hvbusSolar50MWHLS}
+\end{table}
+
+\section{Solar = 100 MW, RLS}
+
+For the studied scenario Solar = 100 MW, RLS, the bus violating the upper voltage limit is the bus 211, for the bus fault BUS 202.
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+211 & BUS 202 & 1.03 & 1.10 & 0.07 & 0.05 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages greater than emergency voltage of 1.1 PU for scenario Solar = 100 MW, RLS}
+\label{hvbusSolar100MWRLS}
+\end{table}
+
+\section{Results Summary}
+
+
+The Table ~\ref{sum_up} summarises the results of the AC contingency calculation carried out on the hypothetical SAVNW system for Topology 2 for upper emergency bus voltage violations by tabulating the summary of upper voltage violations grouped by scenario and contingency to give the buses reporting upper voltage range violations and the count of upper voltage range violations. 
+
+
+It can be seen that only the bus 211 is reporting the upper voltage range violation across all the studied scenarios and contingencies. The contingencies for which the bus 211 reports upper voltage range violations are for bus faults BUS 202 and BUS 205. And the scenarios for which the bus 211 reports the upper voltage range violation are the scenarios Solar = 100 MW, LLS and Solar = 50 MW, LLS.
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{lllr}
+\toprule
+Scenario & Contingency & Buses & Bus Count \\
+\midrule
+Solar = 100 MW, RLS & BUS 202 & 211 & 1 \\
+Solar = 50 MW, HLS & BUS 205 & 211 & 1 \\
+\bottomrule
+\end{tabular}}
+\caption{Summary of upper limit voltage violation grouped by Scenario and Contingency}
+\label{sum_up}
+\end{table}
+
+
+
+
+\chapter{Lower Emergency Bus Voltage Violation}
+\label{lower}
+\section{Introduction}
+In this chapter the lower voltage limit violations are reported by bus faults, unit faults and single line faults for each of the studied scenario.
+The violations are reported in tabular format and in the reported table, Base Voltage is PU base case voltage, Contingency Voltage is PU contingency case voltage, Deviation is difference between contingency case and base case voltage, Range Violation is range violations calculated as Contingency Voltage - minimum range limit (0.9 PU for lower emergency range).
+\section{Solar = 0 MW, LLS}
+For the studied scenario Solar = 0 MW, LLS, the buses reporting lower emergency range violations are the buses 203, 103, 154, 3008. The bus 203 reported the violation for the bus fault BUS 202 and the buses 103, 154, 3008 reported the violation for the bus fault BUS 205.
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+203 & BUS 202 & 1.000 & 0.892 & -0.108 & -0.058 \\
+103 & BUS 205 & 0.975 & 0.856 & -0.119 & -0.094 \\
+154 & BUS 205 & 0.975 & 0.856 & -0.119 & -0.094 \\
+3008 & BUS 205 & 0.993 & 0.896 & -0.097 & -0.054 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 0 MW, LLS}
+\label{lvbusSolar0MWLLS}
+\end{table}
+
+\section{Solar = 0 MW, RLS}
+For the studied scenario Solar = 0 MW, RLS, the buses reporting lower emergency range violations is/are the buses 103, 154, 203, 3007, 3008.
+The buses 103, 154, 203, 3007, 3008 reported violation for the bus fault BUS 205 and the buses 103, 154, 203 reported violation for the single line open fault SING OPN LIN   12 202-203(1). 
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & BUS 205 & 0.973 & 0.805 & -0.168 & -0.145 \\
+154 & BUS 205 & 0.973 & 0.805 & -0.168 & -0.145 \\
+203 & BUS 205 & 0.997 & 0.888 & -0.109 & -0.062 \\
+3007 & BUS 205 & 0.992 & 0.874 & -0.118 & -0.076 \\
+3008 & BUS 205 & 0.989 & 0.853 & -0.136 & -0.097 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 0 MW, RLS}
+\label{lvbusSolar0MWRLS}
+\end{table}
+
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & SING OPN LIN   12 202-203(1) & 0.973 & 0.899 & -0.073 & -0.051 \\
+154 & SING OPN LIN   12 202-203(1) & 0.973 & 0.899 & -0.073 & -0.051 \\
+203 & SING OPN LIN   12 202-203(1) & 0.997 & 0.883 & -0.114 & -0.067 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 0 MW, RLS}
+\label{lvsingleSolar0MWRLS}
+\end{table}
+
+\section{Solar = 0 MW, HLS}
+
+For the studied scenario Solar = 0 MW, HLS, the buses reporting lower emergency range violations are the buses 103, 153, 154, 205, 203, 204, 3008.
+The buses 103, 153, 154, 205 reported violation for the single line open fault SING OPN LIN   6 152-153(1), and the buses 203, 204, 3008 reported violation for the single line open fault SING OPN LIN   12 202-203(1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & SING OPN LIN   6 152-153(1) & 0.971 & 0.883 & -0.088 & -0.067 \\
+153 & SING OPN LIN   6 152-153(1) & 1.017 & 0.890 & -0.127 & -0.060 \\
+154 & SING OPN LIN   6 152-153(1) & 0.971 & 0.883 & -0.088 & -0.067 \\
+205 & SING OPN LIN   6 152-153(1) & 0.980 & 0.897 & -0.083 & -0.053 \\
+203 & SING OPN LIN   12 202-203(1) & 0.995 & 0.814 & -0.182 & -0.136 \\
+204 & SING OPN LIN   12 202-203(1) & 1.006 & 0.899 & -0.107 & -0.051 \\
+3008 & SING OPN LIN   12 202-203(1) & 0.986 & 0.881 & -0.105 & -0.069 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 0 MW, HLS}
+\label{lvsingleSolar0MWHLS}
+\end{table}
+
+\section{Solar = 50 MW, LLS}
+For the studied scenario Solar = 50 MW, LLS, the buses reporting lower emergency range violations are the buses 103, 154 for the bus fault BUS 205.
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & BUS 205 & 0.974 & 0.866 & -0.108 & -0.084 \\
+154 & BUS 205 & 0.975 & 0.867 & -0.108 & -0.083 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 50 MW, LLS}
+\label{lvbusSolar50MWLLS}
+\end{table}
+
+\section{Solar = 50 MW, RLS}
+For the studied scenario Solar = 50 MW, RLS, the buses reporting lower emergency range violations is/are the buses 103, 154, 203, 205, 3007, 3008. The buses 103, 154, 203, 3007, 3008 reported violation for the bus fault BUS 205 and the buses 103, 154, 203, 205, 3007, 3008 reported violation for the single line open fault SING OPN LIN   10 201-205(\&1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & BUS 205 & 0.972 & 0.819 & -0.153 & -0.131 \\
+154 & BUS 205 & 0.973 & 0.821 & -0.152 & -0.129 \\
+203 & BUS 205 & 0.998 & 0.900 & -0.098 & -0.050 \\
+3007 & BUS 205 & 0.993 & 0.886 & -0.107 & -0.064 \\
+3008 & BUS 205 & 0.990 & 0.867 & -0.123 & -0.083 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 50 MW, RLS}
+\label{lvbusSolar50MWRLS}
+\end{table}
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & SING OPN LIN   10 201-205(\&1) & 0.972 & 0.834 & -0.138 & -0.116 \\
+154 & SING OPN LIN   10 201-205(\&1) & 0.973 & 0.836 & -0.137 & -0.114 \\
+203 & SING OPN LIN   10 201-205(\&1) & 0.998 & 0.878 & -0.120 & -0.072 \\
+205 & SING OPN LIN   10 201-205(\&1) & 0.980 & 0.840 & -0.140 & -0.110 \\
+3007 & SING OPN LIN   10 201-205(\&1) & 0.993 & 0.893 & -0.099 & -0.057 \\
+3008 & SING OPN LIN   10 201-205(\&1) & 0.990 & 0.876 & -0.114 & -0.074 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 50 MW, RLS}
+\label{lvsingleSolar50MWRLS}
+\end{table}
+
+\section{Solar = 50 MW, HLS}
+
+For the studied scenario Solar = 50 MW, HLS, the buses reporting lower emergency range violations is/are the buses 103, 153, 154, 203, 205, 3008, 3006, 3007, 3018. 
+The buses 103, 153, 154, 203, 3006, 3007, 3008, 3018 reported violation for the bus fault BUS 205, the buses 103, 153, 154 reported violation for the single line open fault SING OPN LIN   6 152-153(1), and the buses 203, 205, 3008 reported violation for the single line open fault SING OPN LIN   12 202-203(1).
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & BUS 205 & 0.970 & 0.768 & -0.203 & -0.182 \\
+153 & BUS 205 & 1.018 & 0.890 & -0.128 & -0.060 \\
+154 & BUS 205 & 0.971 & 0.770 & -0.202 & -0.180 \\
+203 & BUS 205 & 0.996 & 0.864 & -0.132 & -0.086 \\
+3006 & BUS 205 & 1.018 & 0.894 & -0.124 & -0.056 \\
+3007 & BUS 205 & 0.989 & 0.849 & -0.140 & -0.101 \\
+3008 & BUS 205 & 0.987 & 0.824 & -0.163 & -0.126 \\
+3018 & BUS 205 & 1.049 & 0.896 & -0.153 & -0.054 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 50 MW, HLS}
+\label{lvbusSolar50MWHLS}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & SING OPN LIN   6 152-153(1) & 0.970 & 0.890 & -0.080 & -0.060 \\
+153 & SING OPN LIN   6 152-153(1) & 1.018 & 0.897 & -0.121 & -0.053 \\
+154 & SING OPN LIN   6 152-153(1) & 0.971 & 0.891 & -0.080 & -0.059 \\
+203 & SING OPN LIN   12 202-203(1) & 0.996 & 0.829 & -0.167 & -0.121 \\
+205 & SING OPN LIN   12 202-203(1) & 0.980 & 0.856 & -0.124 & -0.094 \\
+3008 & SING OPN LIN   12 202-203(1) & 0.987 & 0.893 & -0.094 & -0.057 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 50 MW, HLS}
+\label{lvsingleSolar50MWHLS}
+\end{table}
+
+\section{Solar = 100 MW, LLS}
+For the studied scenario Solar = 100 MW, LLS, the buses reporting lower emergency range violations is/are the buses 103, 154.
+The buses 103, 154 reported violation for the bus fault BUS 205.
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & BUS 205 & 0.972 & 0.870 & -0.102 & -0.080 \\
+154 & BUS 205 & 0.975 & 0.875 & -0.101 & -0.075 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 100 MW, LLS}
+\label{lvbusSolar100MWLLS}
+\end{table}
+
+\section{Solar = 100 MW, RLS}
+For the studied scenario Solar = 100 MW, RLS, the buses reporting lower emergency range violations is/are the buses 103, 154, 203, 205, 3008, 204, 3007.
+The buses 103, 154, 203, 204, 205, 3007, 3008 reported violation for the bus fault BUS 202, and the buses 103, 154, 203, 205, 3008 reported violation for the single line open fault SING OPN LIN   10 201-205(\&1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & BUS 202 & 0.969 & 0.826 & -0.144 & -0.124 \\
+154 & BUS 202 & 0.973 & 0.832 & -0.141 & -0.118 \\
+203 & BUS 202 & 0.999 & 0.813 & -0.186 & -0.137 \\
+204 & BUS 202 & 1.009 & 0.895 & -0.114 & -0.055 \\
+205 & BUS 202 & 0.980 & 0.840 & -0.140 & -0.110 \\
+3007 & BUS 202 & 0.993 & 0.895 & -0.099 & -0.055 \\
+3008 & BUS 202 & 0.990 & 0.876 & -0.115 & -0.074 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 100 MW, RLS}
+\label{lvbusSolar100MWRLS}
+\end{table}
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & SING OPN LIN   10 201-205(\&1) & 0.969 & 0.847 & -0.122 & -0.103 \\
+154 & SING OPN LIN   10 201-205(\&1) & 0.973 & 0.853 & -0.120 & -0.097 \\
+203 & SING OPN LIN   10 201-205(\&1) & 0.999 & 0.893 & -0.106 & -0.057 \\
+205 & SING OPN LIN   10 201-205(\&1) & 0.980 & 0.858 & -0.122 & -0.092 \\
+3008 & SING OPN LIN   10 201-205(\&1) & 0.990 & 0.891 & -0.100 & -0.059 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 100 MW, RLS}
+\label{lvsingleSolar100MWRLS}
+\end{table}
+
+\section{Solar = 100 MW, HLS}
+
+For the studied scenario Solar = 100 MW, HLS, the buses reporting lower emergency range violations is/are the buses 103, 154, 203, 205, 3007, 3008. The buses 103, 154, 203, 3007, 3008 reported violation for the bus fault BUS 205, 
+the buses 103, 154 reported violation for the single line open fault SING OPN LIN   6 152-153(1)
+and the buses 203, 205 reported violation for the single line open fault SING OPN LIN   12 202-203(1).
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & BUS 205 & 0.968 & 0.776 & -0.191 & -0.174 \\
+154 & BUS 205 & 0.972 & 0.784 & -0.188 & -0.166 \\
+203 & BUS 205 & 0.997 & 0.875 & -0.122 & -0.075 \\
+3007 & BUS 205 & 0.990 & 0.860 & -0.130 & -0.090 \\
+3008 & BUS 205 & 0.987 & 0.836 & -0.151 & -0.114 \\
+\bottomrule
+\end{tabular}}
+\caption{Bus faults reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 100 MW, HLS}
+\label{lvbusSolar100MWHLS}
+\end{table}
+
+
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+
+\begin{tabular}{llrrrr}
+\toprule
+Bus Number & Contingency & Base Voltage & Contingency Voltage & Deviation & Range Violation \\
+\midrule
+103 & SING OPN LIN   6 152-153(1) & 0.968 & 0.892 & -0.076 & -0.058 \\
+154 & SING OPN LIN   6 152-153(1) & 0.972 & 0.897 & -0.075 & -0.053 \\
+203 & SING OPN LIN   12 202-203(1) & 0.997 & 0.839 & -0.158 & -0.111 \\
+205 & SING OPN LIN   12 202-203(1) & 0.980 & 0.865 & -0.115 & -0.085 \\
+\bottomrule
+\end{tabular}}
+\caption{Single line open contingencies reporting bus voltages lower than emergency voltage of 0.9 PU for scenario Solar = 100 MW, HLS}
+\label{lvsingleSolar100MWHLS}
+\end{table}
+
+\section{Results Summary}
+
+The Table ~\ref{sum_low} summarises the results of the AC contingency calculation carried out on the hypothetical SAVNW system for Topology 2 for lower emergency bus voltage violations by tabulating the summary of lower voltage violations grouped by scenario and contingency to give the buses reporting lower voltage range violation and count of the lower voltage range violations. 
+It can be seen that the Bus fault BUS 205 for the scenario Solar = 50 MW, HLS reported the most number of lower limit range violations with 8 buses reporting violations. This is followed by the bus fault BUS 202 for scenario Solar = 100 MW, RLS reporting 7 violations, single line fault SING OPN LIN 12 202-203(1) for scenario Solar = 0 MW, HLS and single line fault SING OPN LIN 10 201-205(\&1) for scenario Solar = 50 MW, RLS reporting 6 bus lower limit voltage violations each. 
+
+The bus reporting the most number of lower voltage limit violations are the buses 103 \& 154 with 38 violations each, followed by buses 203 and 3008 with 26 and 22 violations respectively. Further transmission planning studies needed to be carried out for system reinforcements to ensure reliable and stable operation of the system should a contingency causes system to violate the lower voltage limit. The Table ~\ref{count_low_bus} in the Appendix gives the count of times a bus violate the lower voltage limit $ < 0.9 PU $. 
+
+The contingency causing the most number of lower voltage limit violation is the bus fault BUS 205 resulting in 68 lower limit violation across all the studied scenarios followed by SING OPN LIN 12 202-203(1) with 38 violations, SING OPN LIN 12 201-205(\&1) with 22 violations and SING OPN LIN 6 152-153(1) with 18 violations. The Table ~\ref{count_low_cont} in the Appendix gives the contingencies and no of times these contingencies cause a lower voltage limit violation $ < 0.9 PU $.
+
+The scenarios reporting the most number of lower voltage limit violation are the scenarios Solar = 50 MW, HLS and Solar = 100 MW, RLS with 32 reported violations each followed by the scenario Solar = 0 MW, HLS  and Solar = 50 MW, RLS with 24 reported violations each. Table ~\ref{count_low_scen} in the Appendix gives the number of times a studied scenario reported a lower voltage limit violation $ < 0.9 PU $.
+
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{\begin{tabular}{lllr}
+\toprule
+Scenario & Contingency & Buses & Bus Count \\
+\midrule
+Solar = 50 MW, HLS & BUS 205 & 103,153,154,203,3006,3007,3008 & 8 \\
+Solar = 100 MW, RLS & BUS 202 & 103,154,203,205,3007,3008 & 7 \\
+Solar = 0 MW, HLS & SING OPN LIN   12 202-203(1) & 103,154,203,205,3008 & 6 \\
+Solar = 50 MW, RLS & SING OPN LIN   10 201-205(\&1) & 103,154,203,205,3007,3008 & 6 \\
+Solar = 50 MW, RLS & BUS 205 & 103,154,203,3007,3008 & 5 \\
+Solar = 0 MW, RLS & BUS 205 & 103,154,203,3007,3008 & 5 \\
+Solar = 100 MW, HLS & BUS 205 & 103,154,203,3007,3008 & 5 \\
+Solar = 100 MW, RLS & SING OPN LIN   10 201-205(\&1) & 103,154,203,205,3008 & 5 \\
+Solar = 50 MW, HLS & SING OPN LIN   12 202-203(1) & 103,154,203,205,3008 & 5 \\
+Solar = 100 MW, HLS & SING OPN LIN   12 202-203(1) & 103,154,203,205 & 4 \\
+Solar = 0 MW, HLS & SING OPN LIN   6 152-153(1) & 103,153,154,205 & 4 \\
+Solar = 100 MW, RLS & BUS 205 & 103,154,3007,3008 & 4 \\
+Solar = 50 MW, HLS & SING OPN LIN   6 152-153(1) & 103,153,154 & 3 \\
+Solar = 0 MW, LLS & BUS 205 & 103,154,3008 & 3 \\
+Solar = 0 MW, RLS & SING OPN LIN   12 202-203(1) & 103,154,203 & 3 \\
+Solar = 50 MW, LLS & BUS 205 & 103,154 & 2 \\
+Solar = 100 MW, LLS & BUS 205 & 103,154 & 2 \\
+Solar = 100 MW, HLS & SING OPN LIN   6 152-153(1) & 103,154 & 2 \\
+Solar = 0 MW, HLS & SING OPN LIN   9 201-202(1) & 103,154 & 2 \\
+Solar = 0 MW, LLS & BUS 202 & 203 & 1 \\
+Solar = 50 MW, RLS & SING OPN LIN   12 202-203(1) & 203 & 1 \\
+\bottomrule
+\end{tabular}}
+\caption{Summary of lower limit voltage violation grouped by Scenario and Contingency}
+\label{sum_low}
+\end{table}
+
+\chapter{Conculsion}
+\label{conclusion} 
+
+The contingency analysis was carried out on the hypothetical SAVNW study system for the Year 2, Topology 2 for 9 study scenarios for (N-1) bus, single line open, unit contingencies. Out of all the studied (N-1) contingencies, the contingencies for which the system did not converge are tabulated in Table \ref{count_blown} with the corresponding number of scenarios. 
+
+It can be seen from the Table \ref{count_blown}, for the (N-1) contingencies BUS 154, UNIT 206(1), SING OPN LIN 15 205-206(1), BUS 152, BUS 201 load flow did not converge for any of the 9 studied scenarios. For the (N-1) contingency BUS 151 load flow did not converge for 8 of the studied scenarios, followed by BUS 202 for 5 scenarios and SING OPN LIN 10 201-205(\&1) for 4 of the studied scenarios. 
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Contingency & Count of Scenarios \\
+\midrule
+BUS 154 & 9 \\
+UNIT 206(1) & 9 \\
+SING OPN LIN   15 205-206(1) & 9 \\
+BUS 152 & 9 \\
+BUS 201 & 9 \\
+BUS 151 & 8 \\
+BUS 202 & 5 \\
+SING OPN LIN   10 201-205(\&1) & 4 \\
+BUS 205 & 1 \\
+SING OPN LIN   12 202-203(1) & 1 \\
+BUS 153 & 1 \\
+\bottomrule
+\end{tabular}}
+\caption{Count of scenarios for which tested contingency failed to converge}
+\label{count_blown}
+\end{table}
+
+For the converged contingency scenarios, Chapter \ref{overload} studied the branch overload violations, Chapter \ref{upper} studied the upper limit voltage violation, and Chapter \ref{lower} studied the lower limit voltage violations. 
+
+In the Chapter \ref{overload} branches reporting loading greater than 100\% were tabulated for each scenario and from the table, branches reporting loading greater than 130\% were also noted down. It was seen that the branch with most number of overload violation were reported for branch153-154(1) with 38 loading violation followed by the branch 3001-3003(1) with 19 violations.
+
+In the Chapter \ref{upper} buses reporting voltage greater than 1.1 PU (violation of upper limit) were studied and it was seen that only the generator bus 211 reported the upper limit violation. In the Chapter \ref{lower} buses reporting voltage less than 0.9 PU (violation of lower limit) were tabulated, there were multiple buses reporting lower limit violation and the buses 103 and 154 in Area 1 reported the most number of violations.
+
+The system scenarios for which the faults caused violation needs to be studied for system reinforcements for long term planning, and for alternate dispatch arrangements and demand side measures for operational planning to ensure system operates within the specified tolerance levels when such a contingency occurs. 
+
+
+\chapter*{Appendix}
+\addcontentsline{toc}{chapter}{Appendix}
+\label{chapter:app}
+
+\section{Branch Overload Violation $ > 100\% $ Counts}
+
+\subsection{Loading Violation Counts - Scenario}
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Scenario & Overload Counts \\
+\midrule
+Solar = 50 MW, HLS & 15 \\
+Solar = 0 MW, RLS & 13 \\
+Solar = 0 MW, HLS & 12 \\
+Solar = 100 MW, HLS & 11 \\
+Solar = 0 MW, LLS & 10 \\
+Solar = 50 MW, RLS & 10 \\
+Solar = 100 MW, RLS & 10 \\
+Solar = 50 MW, LLS & 9 \\
+Solar = 100 MW, LLS & 8 \\
+\bottomrule
+\end{tabular}}
+\caption{Overload Count per Scenario}
+\label{scen_overload_scen}
+\end{table}
+
+\subsection{Loading Violation Counts - Branch}
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Branch & Overload Counts \\
+\midrule
+153-154(1) & 26 \\
+3001-3003(1) & 19 \\
+205-206(1) & 16 \\
+154-205(1) & 11 \\
+154-203(1) & 10 \\
+101-151(1) & 6 \\
+153-154(2) & 6 \\
+3001-3011(1) & 1 \\
+3003-3005(1) & 1 \\
+3003-3005(2) & 1 \\
+3005-3007(1) & 1 \\
+\bottomrule
+\end{tabular}}
+\caption{Overload Count per Branch}
+\label{scen_overload_bran}
+\end{table}
+
+\subsection{Loading Violation Counts - Contingency}
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Contingency & Overload Counts \\
+\midrule
+BUS 205 & 18 \\
+SING OPN LIN   6 152-153(1) & 10 \\
+SING OPN LIN   12 202-203(1) & 10 \\
+SING OPN LIN   1 101-151(1) & 9 \\
+UNIT 101(1) & 9 \\
+SING OPN LIN   11 201-211(1) & 8 \\
+BUS 203 & 8 \\
+UNIT 211(1) & 8 \\
+BUS 151 & 5 \\
+SING OPN LIN   10 201-205(\&1) & 3 \\
+SING OPN LIN   2 102-151(1) & 3 \\
+BUS 153 & 3 \\
+UNIT 102(1) & 3 \\
+BUS 202 & 1 \\
+\bottomrule
+\end{tabular}}
+
+\caption{Overload Count per Contingency}
+\label{scen_overload_cont}
+\end{table}
+
+
+
+\section{Upper Voltage Limit Violation $ > 1.1 PU $ Counts}
+\subsection{Upper Voltage Limit Counts - Scenario}
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Scenario & Overload Counts \\
+\midrule
+Solar = 50 MW, HLS & 2 \\
+Solar = 100 MW, RLS & 2 \\
+\bottomrule
+\end{tabular}}
+\caption{Upper Voltage Limit Counts - Scenario}
+\label{count_up_scen}
+\end{table}
+
+\subsection{Upper Voltage Limit Counts - Contingency}
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Contingency & Overload Counts \\
+\midrule
+BUS 205 & 2 \\
+BUS 202 & 2 \\
+\bottomrule
+\end{tabular}}
+\caption{Upper Voltage Limit Counts - Contingency}
+\label{count_up_cont}
+\end{table}
+
+\subsection{Upper Voltage Limit Counts - Contingency}
+
+\begin{table}[H]
+
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Contingency & Overload Counts \\
+\midrule
+BUS 205 & 2 \\
+BUS 202 & 2 \\
+\bottomrule
+\end{tabular}}
+\caption{Upper Voltage Limit Counts - Contingency}
+\label{count_up_cont}
+\end{table}
+
+\section{Lower Voltage Limit Violation $ < 0.9 PU $ Counts}
+\subsection{Lower Voltage Limit Counts - Bus}
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Bus & Overload Counts \\
+\midrule
+103 & 38 \\
+154 & 38 \\
+203 & 26 \\
+3008 & 22 \\
+3007 & 14 \\
+205 & 14 \\
+153 & 6 \\
+204 & 4 \\
+3006 & 2 \\
+3018 & 2 \\
+\bottomrule
+\end{tabular}}
+\caption{Lower Voltage Limit Counts - Bus}
+\label{count_low_bus}
+\end{table}
+
+\subsection{Lower Voltage Limit Counts - Scenario}
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Scenario & Overload Counts \\
+\midrule
+Solar = 50 MW, HLS & 32 \\
+Solar = 100 MW, RLS & 32 \\
+Solar = 0 MW, HLS & 24 \\
+Solar = 50 MW, RLS & 24 \\
+Solar = 100 MW, HLS & 22 \\
+Solar = 0 MW, RLS & 16 \\
+Solar = 0 MW, LLS & 8 \\
+Solar = 50 MW, LLS & 4 \\
+Solar = 100 MW, LLS & 4 \\
+\bottomrule
+\end{tabular}}
+\caption{Lower Voltage Limit Counts - Scenario}
+\label{count_low_scen}
+\end{table}
+
+\subsection{Lower Voltage Limit Counts - Contingency}
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{lr}
+\toprule
+Contingency & Overload Counts \\
+\midrule
+BUS 205 & 68 \\
+SING OPN LIN   12 202-203(1) & 38 \\
+SING OPN LIN   10 201-205(\&1) & 22 \\
+SING OPN LIN   6 152-153(1) & 18 \\
+BUS 202 & 16 \\
+SING OPN LIN   9 201-202(1) & 4 \\
+\bottomrule
+\end{tabular}}
+\caption{Lower Voltage Limit Counts - Scenario}
+\label{count_low_cont}
+\end{table}
+
+
+
+\end{document}
