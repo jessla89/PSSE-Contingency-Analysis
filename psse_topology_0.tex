@@ -1,0 +1,297 @@
+\documentclass{report}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=1.5cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage[list=true,listformat=simple]{subcaption}
+\usepackage{multirow}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{pifont}
+\usepackage{lscape}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{array}
+\usepackage{float}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pythonhighlight}
+
+\setcounter{secnumdepth}{4}
+\makeatletter
+\setlength\@fptop{0pt}             % default: '0\p@ \@plus 1fil'
+\setlength\@fpsep{2\baselineskip}  % default: '8\p@ \@plus 2fil'
+\makeatother
+
+
+% Title Page
+\title{PSSE Year 0 Topology 0 Analysis}
+\author{Jessla Varaparambil Abdul Kadher}
+\begin{document}
+\maketitle
+
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\newpage
+
+\chapter{Introduction}
+
+\section{Study Description}
+
+The Year 0 Topology 0 contingency analysis of the hypothetical SAVNW system is carried out to report the branches reporting loading greater than 100\% and buses reporting upper and lower voltage limit violations. 
+
+\begin{figure}[h!]
+   \centering 
+   \includegraphics[scale=0.5]{y0t0}
+   \caption{Single Line Diagram Year 0, Topology 0} 
+   \label{fig:y0t0}
+\end{figure}
+
+For the hypothetical SAVNW system, the Year 0 Topology 0 of the system represents the present year system as shown in Figure ~\ref{fig:y0t0}. There are 6 generators in 3 areas. Total installed capacity of the system is the sum of firm capacity provided by 6 generating units and equals 4153.25 MW. 
+
+Detailed analysis of Year 0 Topology 0 Base Case was carried out and can be found \href{https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Data-Extraction/blob/main/Analysis_Topology_0.html}{here}. The combined total generation in all areas of 2765 MW is serving a total load of 2723 MW with the generators 102 – NUC-B, 211-HYDRO\_G, 3018-CATDOG\_G operating at their nominal power output of 700 MW, 500 MW and 90 MW respectively. The swing generator in each area operates to meet the load, loss and interchange criteria. The desired interchange for all the scenarios studied is highlighted in Figure ~\ref{fig:year0totals}. For all the scenarios studied the desired interchange from FLAPCO to LIGHTCO is 100 MW, and from FLAPCO to WORLD is 150 MW. 
+
+\begin{figure}[h!]
+   \centering 
+   \includegraphics[scale=0.6]{year_0_totals}
+   \caption{System Totals for Year - 0, Topology - 0} 
+   \label{fig:year0totals}
+\end{figure}
+
+
+\section{Contingency Analysis}
+
+
+AC contingency calculation was conducted on the hypothetical SAVNW system for Year 0 Topology 0. The configuration files used are:
+\begin{itemize}
+\item Subsystem file savnw.sub - Studied subsystems of the studied case defined via the Subsystem Definition data file (Figure ~\ref{fig:sub})
+\item Monitor file savnw.mon - Monitored Element Data File identifies the branches that are to be monitored for flow violations and the buses that are to be monitored for voltage violations (Figure ~\ref{fig:mon})
+\item  Contingency file savnw.con - Contingency cases that are to be tested are defined in the Contingency Definition data file (Figure ~\ref{fig:con})
+\end{itemize}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.6]{sub.png}
+   \caption{The subsystem file corresponding to Year 1 Topology 1} 
+   \label{fig:sub}
+\end{figure}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.6]{mon.png}
+   \caption{The monitored file corresponding to Year 1 Topology 1} 
+   \label{fig:mon}
+\end{figure}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.6]{con.png}
+   \caption{The contingency file corresponding to Year 1 Topology 1} 
+   \label{fig:con}
+\end{figure}
+
+
+The API DFAX\_2 is used to construct distribution factor data files corresponding to the case .sav file, and the defined .sub, .mon, .con configuration files.
+By running the AC contingency calculation function ACCC\_WITH\_DSP\_3, the contingency solution output .acc files is obtained.
+
+Python code to conduct AC contingency calculation is:
+
+
+\begin{python}
+import psspy
+psspy.case(r"""savnw.sav""")
+psspy.fdns([0,1,0,0,0,0,99,0])
+psspy.dfax_2([1,1,0],r"""savnw.sub""",r"""savnw.mon""",r"""savnw.con""",r"""savnw.dfx""")
+psspy.accc_with_dsp_3(0.1,[0,0,0,0,1,2,0,0,0,2,0],r"""CON""",r"""savnw.dfx""",r"""savnw.acc""","","","")
+\end{python}
+
+Using the contingency solution output file savnw.acc, the results is exported as an excel file for further analysis. The results exported are ACCC Analysis Summary, Monitored Branch Flow (MVA), Monitored Bus Voltage. <br>
+
+Python code to export AC contingency solution output file as excel is: 
+
+\begin{python}
+import psspy
+import pssexcel
+pssexcel.accc('savnw.acc', ['s','b'], colabel='',stype='contingency', busmsm=0.5, sysmsm=5.0,
+                rating='a', namesplit=False,xlsfile='out.xlsx', sheet='', overwritesheet=True, show=False, ratecon='b',
+                baseflowvio=False,basevoltvio=False, flowlimit=100.0, flowchange=0.0, voltchange=0.0,swdrating='a',
+                swdratecon='b',baseswdflowvio=False,basenodevoltvio=False,overloadreport=False)
+\end{python}
+
+Contingency analysis was carried out in PSSE for the studied case for Year 0 Topology 0. It was seen that the power flow solution did not converge for some of the tested contingencies. For the studied case, 42 contingencies were converged out of the 47 contingencies tested, the contingencies not converged are UNIT 206(1), SING OPN LIN   14 205-206(1), BUS 152, BUS 154, BUS 201.
+
+For the converged contingencies for the studied case, the result of the contingency analysis is analysed to check for branch overload ($ > 100\%$) and out of range bus voltage violations (lower emergency limit $ < 0.9 PU $ and upper emergency limit $ > 1.1 PU$). It was seen that for some of the contingencies there were no branch overload or bus voltage violations reported. Rest of the contingencies violating branch overload and bus voltage emergency range violation are reported. Chapter ~\ref{violations} gives the observed branch flow violations, upper and lower emergency voltage violations for the studied case. As load flow analysis checks the power balance of the network at the instant the fault occurred on the system, it will not give the information regarding the dynamic behaviour of the system. Chapter \ref{dynamic} gives the result of the dynamic stability analysis carried out to see if the system is stable after the occurrence of the fault. To conclude, Chapter ~\ref{conclusion} summarises the results of all the analysis carried out on Year 0, Topology 0 of the hypothetical SAVNW system. 
+
+
+\chapter{Contingency Limit Violations}
+\label{violations}
+\section{Introduction}
+In this chapter, for Year 0, Topology 0, the branches that are loaded more than 100\% of their rating, and buses violating the upper and lower emergency ratings are reported. 
+
+\section{Branch Overload Violation}
+For Year 0, Topology 0, loading violations were reported for 3 branches 153-154(1), 3001-3003(1), and 154-203(1).
+For the branch 153-154(1), loading of 102.62\% was reported for the contingency SING OPN LIN   11 202-203(1). The branch 3001-3003(1), reporting a loading of 199.87\%  for the contingency BUS 151 is considered as severe/ critical loading. For the branch 154-203(1), loading of 117.68 was reported for the contingency BUS 205. The Table gives the loading violations in tabular form. 
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrrr}
+\toprule
+BRANCH & CONTINGENCY & MVAFLOW & AMPFLOW & RATE RATE1/RATE2 & Loading \\
+\midrule
+153-154(1) & SING OPN LIN   11 202-203(1) & -349.97 & 359.16 & 350.00 & 102.62 \\
+3001-3003(1) & BUS 151 & 616.28 & 599.62 & 300.00 & 199.87 \\
+154-203(1) & BUS 205 & 266.19 & 294.19 & 250.00 & 117.68 \\
+\bottomrule
+\end{tabular}}
+\caption{Branch Loaded greater than 100\% for Topology 0}
+\label{overload_top0}
+\end{table}
+
+\section{Upper Emergency Bus Voltage Violation}
+The only upper voltage violation was reported by the bus 201 for the bus fault at bus 151 labelled ‘BUS 151’. The reported violation is tabulated in Table ~\ref{upper_top0}. 
+
+\begin{table}[H]
+\centering
+\scalebox{0.9}{
+\begin{tabular}{llrrr}
+\toprule
+BUS & CONTINGENCY & BASE VOLTS & CONT VOLTS & RANGE VIO \\
+\midrule
+    201   & BUS 151 & 1.058 & 1.101 & 0.001 \\
+\bottomrule
+\end{tabular}}
+\caption{Upper emergency range violation for Topology 0}
+\label{upper_top0}
+\end{table}
+
+\section{Lower Emergency Bus Voltage Violation}
+
+There was no lower emergency voltage limit violation reported for the studied case for the Year 0 Topology 0.
+
+
+\chapter{Dynamic Stability Analysis }
+\label{dynamic}
+
+
+\section{Introduction}
+As load flow analysis checks the power balance of the network at the instant the fault occurred on the system, it will not give the information regarding the dynamic behaviour of the system. Dynamic stability analysis is carried out to see if the system is stable after the occurrence of the fault. From chapter ~\ref{violations}, the faults causing overloading and/ or voltage limit violations are 'BUS 205’ ,'SING OPN LIN   11 202-203(1)', 'BUS 151'. Dynamic simulation is carried out on the studied case by applying each individual fault at TIME = 2 Seconds to check the dynamic stability of the faulted system. The python script used to carry out this simulation is given in the Appendix ~\ref{chapter:app} of the document. 
+
+\section{BUS 151}
+Dynamic simulation was conducted on the system for a bus fault at bus 151. When the bus fault at bus 151 was applied on the system at 2.0 seconds, Network not converged was first reported at TIME = 2.1167 seconds (Figure \ref{fig:non_151}). At TIME = 3.175 seconds,  3 bus(es) in island(s) were reported (Figure \ref{fig:bus_151}). At TIME = 4.9667 seconds, 19 bus(es) in island(s) with no in-service machines was reported(Figure \ref{fig:bus_151_1}). Hence, the system is not dynamically stable for a bus fault at BUS 151. 
+
+\begin{figure}[h!]
+   \centering 
+   \includegraphics[scale=0.6]{bus_151_non}
+   \caption{Progress bar output for Bus fault at BUS 151 } 
+   \label{fig:non_151}
+\end{figure}
+
+\begin{figure}[h!]
+   \centering 
+   \includegraphics[scale=0.6]{bus_151}
+   \caption{Progress bar output for Bus fault at BUS 151 - continued} 
+   \label{fig:bus_151}
+\end{figure}
+
+\begin{figure}[h!]
+   \centering 
+   \includegraphics[scale = 0.5]{bus_151_1}
+   \caption{Progress bar output for Bus fault at BUS 151 - continued} 
+   \label{fig:bus_151_1}
+\end{figure}
+
+\section{BUS 205}
+Dynamic simulation conducted on the system with fault applied at Bus 205 at TIME = 2.0 seconds. At TIME = 6.558 seconds, 21 bus(es) in island(s) with no in-service machines was reported and the bus disconnected from the system were reported. Hence, the system is not dynamically stable for a bus fault at BUS 205. 
+\begin{figure}[H]
+\centering 
+\scalebox{0.55}{\includegraphics{progress_bus205}}
+\caption{Progress bar output for Bus fault at BUS 205 - continued} 
+\label{fig:progress_bus_205}
+\end{figure}
+
+\section{SING OPN LIN   11 202-203(1)}
+Dynamic simulation was conducted with bus fault applied at 2.0 seconds. It was seen that the system was dynamically stable. Slight overloading was reported (Figure \ref{fig:202_203_overload}) for the branch 153-154(1) similar to the overload reported in Table \ref{overload_top0} from the contingency analysis. 
+
+\begin{figure}[H]
+   \centering 
+  \scalebox{0.7}{\includegraphics{202-203-overload}}
+   \caption{System Totals for Year - 0, Topology - 0} 
+   \label{fig:202_203_overload}
+\end{figure}
+
+\chapter{Conculsion}
+\label{conclusion} 
+
+The contingency analysis was carried out on the hypothetical SAVNW study system for the Year 0, Topology 0 to study the (N-1) bus, single line open, unit contingencies. Out of all the studied (N-1) contingencies, the contingencies for which the system did not converge are the contingencies UNIT 206(1), SING OPN LIN   14 205-206(1), BUS 152, BUS 154, BUS 201.
+
+For the converged contingency scenarios, Chapter \ref{violations} reported the branch overload, upper and lower limit voltage violations. From the branch overload table, Table \ref{overload_top0} branches reporting loading greater than 130\% was the branch 3001-3003(1), for a bus fault BUS 151. There was a slight violation from upper emergency voltage value for Bus 201 and no lower limit voltage violations were reported for any of the studied Buses. 
+
+In the Chapter \ref{dynamic} for the faults reporting the violations, dynamic simulations were carried out to determine the dynamic stability of the system. For the bus fault at buses 151 and 205, the system was not dynamically stable. For the single line open 202-203(1), the system was dynamically stable with the branch 153-154(1) still reporting overload violations.  
+
+Hence it can be concluded that in addition to the contingencies not converging reported by contingency analysis, the contingencies corresponding to the bus faults BUS 151 and BUS 205 also causes system to be unstable. 
+
+\chapter*{Appendix}
+\addcontentsline{toc}{chapter}{Appendix}
+\label{chapter:app}
+
+\section{Python program to check dynamic stability of the system for contingencies reporting violations}
+\label{script}
+\begin{python}
+import psspy
+psspy.case(r"""savnw.sav""")
+psspy.fdns([0,1,0,0,0,1,99,0])
+psspy.cong(0)
+psspy.conl(0,1,1,[0,0],[40.0,30.0,40.0,30.0])
+psspy.conl(0,1,2,[0,0],[40.0,30.0,40.0,30.0])
+psspy.conl(0,1,3,[0,0],[40.0,30.0,40.0,30.0])
+psspy.ordr(1)
+psspy.fact()
+psspy.tysl(1)
+psspy.dyre_new([1,1,1,1],r"""savnw.dyr""","","","")
+psspy.set_osscan_2(1,1,0)
+psspy.set_relscn(1)
+psspy.set_vltscn(1,1.5,0.5)
+psspy.set_genpwr(1,1.1)
+psspy.set_genang_3(1,180.0,0.0,1)
+psspy.set_genspdev(1,10.0,1)
+psspy.set_volt_viol_subsys_flag(0)
+psspy.set_voltage_dip_check(1,0.8,0.2)
+psspy.set_voltage_rec_check(1,1,0.8,0.4,0.9,1.0)
+psspy.set_netfrq(1)
+psspy.set_relang(1,0,"")
+psspy.bsys(1,0,[0.0,0.0],0,[],8,[153,154,202,203,3001,3003,203,201],0,[],0,[])
+psspy.chsb(1,0,[1,9,1,1,17,0])
+psspy.bsys(1,0,[0.0,0.0],0,[],7,[153,154,202,203,3001,3003,201],0,[],0,[])
+psspy.chsb(1,0,[13,21,37,1,13,0])
+psspy.strt_2([0,0],r"""slg_202_203.out""")
+# For Bus fault at 205
+psspy.run(0,2.0,2,2,0)
+psspy.dist_3phase_bus_fault(205,0,1,0.0,[0.0,-0.2E+10])
+psspy.run(0,10.0,2,2,0)
+# For Bus fault at 151
+psspy.run(0,2.0,2,2,0)
+psspy.dist_3phase_bus_fault(151,0,1,0.0,[0.0,-0.2E+10])
+psspy.run(0,10.0,2,2,0)
+# for Single Line Open from 202 to 203
+psspy.dist_branch_fault(202,203,r"""1""",1,500.0,[0.0,-0.2E+10])
+psspy.run(0,10.0,2,2,0)
+# Power flow after dynamic simulation
+psspy.ordr(1)
+psspy.fact()
+psspy.tysl(1)
+# Overload check > 100%
+psspy.rate_2(0,1,1,1,1,2,100.0)
+# range violation check V < 0.9 PU, V > 1.1 PU
+psspy.vchk(0,1,0.9,1.1)
+\end{python}
+
+\end{document}
