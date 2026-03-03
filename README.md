@@ -49,7 +49,7 @@ For each of the studied topologies
     https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/lower_limit__violation_Topology_1.html  <br>
 
 
-    4.	Upper limit voltage violation analysis 
+4.	Upper limit voltage violation analysis 
 
        *  Year 1, Topology 1 – Upper limit voltage violations <br>
          https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/upper_limit_violation_Topology_1.html <br>
