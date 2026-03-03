@@ -63,7 +63,7 @@ The hypothetical SAVNW integrated system interconnects three different independe
 
 For the system detailed analysis of systems ability to meet the peak demand in base case for each of the studied scenario was carried out for the 5 years for 7 topologies (Topology 0 to 6). The study carried out for Base Case without any system contingency showed that the system has the ability to meet the demand of its customers with a recommended need of some demand side measures to ease the overload in some of the high load study scenarios without any indication of unstable system operation.The present study is carried out to check if with present agreed upon interchange commitments the system has enough resources to serve the demand for each year starting from Year 0 to Year 5 when the system is subjected to various contingencies including unit faults, bus faults, and single line open contingencies. 
 
-As there was overloading and near low emergency voltage cases reported for various base case for each of the studied scenarios, in case of systems contingency analysis this number was expected to be higher with expectation of some of the contingencies causing system load flow not to converge at all. By conducting the contingency analysis on the system for 7 topologies for all the considered scenarios, the above assumption was observed to be true with very high number branch overload and lower emergency voltage violations reported across all/ most of the studied scenarios in studied topologies. The detailed contingency analysis for all the 7 topologies was carried out and the study reports can be found \href{}{here}. The present work analyses the results of the contingency analysis carried out for the 7 topologies for (N-1) contingencies to plan for the future upgrades to ensure reliable and secure operation of the interconnected hypothetical SAVNW integrated system. 
+As there was overloading and near low emergency voltage cases reported for various base case for each of the studied scenarios, in case of systems contingency analysis this number was expected to be higher with expectation of some of the contingencies causing system load flow not to converge at all. By conducting the contingency analysis on the system for 7 topologies for all the considered scenarios, the above assumption was observed to be true with very high number branch overload and lower emergency voltage violations reported across all/ most of the studied scenarios in studied topologies. The detailed contingency analysis for all the 7 topologies was carried out and the study reports can be found \href{https://github.com/jessla89/PSSE-Contingency-Analysis}{here}. The present work analyses the results of the contingency analysis carried out for the 7 topologies for (N-1) contingencies to plan for the future upgrades to ensure reliable and secure operation of the interconnected hypothetical SAVNW integrated system. 
 
 
 \chapter{Study Description}
@@ -72,14 +72,12 @@ As there was overloading and near low emergency voltage cases reported for vario
 
 The contingency analysis of the hypothetical SAVNW system was carried out to report the branches reporting loading greater than 100\% and buses reporting upper and lower voltage limit violations for 7 topologies spanning 5 years. The systems topology at the end of planning horizon is as shown in Figure ~\ref{fig:y5t6}.
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{y5t6}
+\includegraphics[scale=0.55]{y5t6}
 \caption{System Topology at the end of Year 5} 
 \label{fig:y5t6}
 \end{figure}
-
-Detailed analysis of base cases of all the 7 topologies was carried out, and the results of the analysis was summarised as a study report and can be found \href{https://github.com/jessla89/PSSE-Data-Extraction/blob/main/resource_study_addition.pdf}{here}. 
 
 
 \section{Contingency Analysis}
@@ -142,7 +140,12 @@ pssexcel.accc('savnw.acc', ['s','b','v'], colabel='',stype='contingency', busmsm
 
 Detailed contingency analysis of all 7 topologies were carried out, and the results of the analysis were summarised as study reports for Topology 0 to Topology 6, and can be found \href{https://github.com/jessla89/PSSE-Contingency-Analysis}{here}. 
 
-The contingency analysis was carried out for the 7 topologies for three types of faults and are single line open contingency fault, unit fault, and bus fault. The single line open contingency and unit faults are (N-1) contingency and takes out exactly one element of the system out of operation, whereas a single bus fault can take multiple elements of the interconnected system out of service. In the summary study for contingency analysis of the hypothetical SAVNW system, only (N-1) contingency cases are considered for reporting the loading and voltage violations. For each studied topology, the number of studied scenarios for which a branch gets overloaded due to a (N-1) contingency is summarised in Chapter ~\ref{chap:sum}. The Chapter ~\ref{chap:sum} also summarizes the number of studied scenarios for which a (N-1) contingency does not report a converged power flow solution.
+The contingency analysis was carried out for the 7 topologies for three types of faults and are single line open contingency fault, unit fault, and bus fault. The single line open contingency and unit faults are (N-1) contingency and takes out exactly one element of the system out of operation, whereas a single bus fault can take multiple elements of the interconnected system out of service. In the summary study for contingency analysis of the hypothetical SAVNW system, only (N-1) contingency cases are considered for reporting the loading and voltage violations. 
+
+For the planning horizon, Chapter \ref{chap:sum} will describe the system topologies that will be studied. Chapter ~\ref{chap:nonconv} summarizes the number of studied scenarios for which a (N-1) contingency does not report a converged power flow solution. For each studied topology, the number of studied scenarios for which a branch gets overloaded due to a (N-1) contingency is summarised in Chapter ~\ref{chap:ovrld}. Chapter \ref{chap:upemvol} and Chapter \ref{chap:lowemvol} describes the number of times a bus violates the upper and lower emergency voltage range. The summary of AC contingency calculation for 7 topologies spanning 5 years is given in the Chapter \ref{conclusion}. 
+
+
+
 
 \chapter{Topology Descriptions}
 \label{chap:sum}
@@ -366,7 +369,7 @@ In order to ensure the system is able to withstand this unbalance, feasibility s
 \item Similar to the line outage 201-202(1) reducing the systems capability to transfer power from generators connected at Bus 211 and 212 to serve the loads connected at Bus 203 and 205, the single line contingency 202-203(1) also causes the systems capability to transfer power from Generators at Buses 211 to 212 and hence the generator unable to transfer the power and causing the load flow not to converge. 
 \item The line SING OPN LIN 201-205(\&1) is multisegmented single line contingency which had reported nonconvergence in Year 2 and Year 3. In Year 3, as part of the transmission upgrade, the second part of the segment would be upgraded with an additional transformer in parallel to the existing transformer to increase the capacity of transfer. When the upgrade would be complete in Year 3, the planning study shows that the outage of the single line branch 201-204(1) only reports nonconvergence, calling for upgrade of the line to have back up path for transfer of power from generating units connected at Bus 211 and 212. 
 \item The single line contingencies in Area 1 whose outages could cause the nonconvergence of load flow obtained from the contingency analysis are corresponding outages of branches 151-152(1), 151-152(2), and 152-153(1). The amount of power that transferred through these branches are very high. These branches would become a path of power transfer from Area 2 generation to Area 1 back to Area 2 loads. These branch outages only report nonconvergence after the 3rd year when the hydro generator at Bus 212 becomes operational. The lack of transmission upgrade in Area 2 due to various reasons for the addition of generating unit at Bus 212 would be the cause of these nonconvergence in area 1 in branches 151-152(1), 151-152(2), and 152-153(1). 
-\item There would only be 1 time when the contingency SING OPN LIN 3001-3003(1) would report a nonconvergence would be before the transmission upgrade of parallel line 3001-3003(2) would have been added to the system.
+\item There would only be 1 time when the contingency SING OPN LIN 3001-3003(1) would report a nonconvergence, which would be before the transmission upgrade of parallel line 3001-3003(2) would have been added to the system giving an additional path for power flow from the system swing generator.
 
 \end{itemize} 
 
@@ -563,7 +566,7 @@ Observations regarding the overloading violations are
 \begin{itemize}
 \item The branch 3001-3003(1) is the branch reporting the most number of loading violations across all the studied topologies and scenarios. It was seen that except for year 3, topology 3 when the system is highly overloaded without any transmission transfer path back ups, the overloading of the branch 3001-3003(1) is caused due to an area swing generator outage, forcing dispatch of the system swing generator connected at Bus 3011 to balance the power flow. Here, the system swing generator is being dispatched than the reserves in the same area because of the AC contingency calculation parameter used for this study.
 \item When either of the area swing generator goes out of service due to one of the following single line contingencies SING OPN LIN 1 101-151(1), UNIT 101(1), SING OPN LIN 20 205-206(1), UNIT 206(1), sensitivity analysis conducted shows that the generation from 3011 increases the loading on the branches 3001-3003(1) and when the transmission upgrade would be completed in Year 3, the overloading due to these contingencies extends to the parallel branch 3001-3003(2) as well. The transmission upgrade does not relieve the load on the branches as the capacity of the newly added branch is same as the already existing low-capacity branch, and the combined capacity of the two parallel branches are still not enough to bring the loading to less than 100\%. 
-\item For the parallel branches 153-154(1) and 153-154(2), for Year 2, Topology 2, when the contingency single line open 202-203(1) was studied, the sensitivity analysis showed that the power flows through the branches 202 - 152(1), 152 - 153(1), 153 - 154(1), 153-154(2), and back to 154-203(1) and 154 to 205 to reach the main load center. The branches 153-154(1) and 153-154(2) being low capacity branches, reported a loading greater than 100\%.
+\item For the parallel branches 153-154(1) and 153-154(2), for Year 2, Topology 2, when the contingency single line open 202-203(1) was studied, the sensitivity analysis showed that the power flows through the branches 202-152(1), 152-153(1), 153- 54(1), 153-154(2), and back to 154-203(1) and 154 to 205 to reach the main load center. The branches 153-154(1) and 153-154(2) being low capacity branches, reported a loading greater than 100\%.
 \item For year 1, Topology 1 the loading violation is reported for the branch 205-206(1) for single line outage 201-211(1) and UNIT 211. Both of these contingencies essentially take the generating unit 211 out of service, resulting in the generating unit at 206 to generate more and hence resulting in overload in the transformer branch from 206 to 205. When the generator at Bus 212 comes into service in year 3, overloading of the branch 205-206(1) is also reported when single line contingencies that takes the generating unit at 212 out of service. 
 \item When single line open occurs at the transformer branch 152-153(1) in various studied topologies, the path to transfer power from Bus 152 to 154 is open between 152 and 153. The sensitivity analysis indicates this results in increased flows to both ties to which the branch 152 is connected and from ties to which the branch 154 is connected. Among various studied topologies, the branches reporting a loading greater than 100\% for SING OPN LIN 152-153(1) are the branches 154-205(1), 154-203(1), 202-203(1), 204-205(1), 203-205(1) and 203-205(2). 
 \item The overloading of Branch 3005-3007(1) in area 5 would be caused by SING OPN LIN 20 205-206(1) and UNIT 206(1), as the sensitivity analysis shows that, when these contingencies may occur, there would need to be additional generation needed from the system swing generator connected at Bus 3011, and hence causing the branch flows in the area 5 to increase.
@@ -676,7 +679,7 @@ Bus & Contingencies & Upper violation counts \\
 
 \section{Result Summary}
 
-In all the topologies studied, the upper emergency voltage violations are reported by the generator buses 211 and 212 is due to these buses regulating the voltage of the bus 201. In the study the buses 211 and 212 are set to regulate the voltage at the bus 201 to 1.04 PU. It was seen that across all the studied topologies and scenarios the bus 201 never violates the upper or lower emergency or normal voltage ratings. 
+In all the topologies studied, the upper emergency voltage violations are reported by the generator buses 211 and 212 is due to these buses regulating the voltage of the bus 201. In the study the buses 211 and 212 are set to regulate the voltage at the bus 201 to 1.04 PU. It was seen that across all the studied topologies and scenarios, the bus 201 never violates the upper or lower emergency or normal voltage ratings. 
 
 
 \chapter{Topology Summary - Lower Emergency Voltage Violations}
@@ -879,47 +882,123 @@ Bus & Contingencies & Lower violation counts \\
 
 
 \section{Result Summary}
-The low voltage violation reported in Year 1, Topology 1 on the buses 103, 154, 3008, 203, 206 and 205 is all due to contingencies occurring in Area 2 of the hypothetical SAVNW system. It was seen that when either of the contingencies SING OPN LIN   10 201-205(\&1), SING OPN LIN   15 205-206(1), or UNIT 206(1) occurs in the system, as all the contingencies are related to the biggest load bus 205 in the system, the branches surrounding the bus gets loaded to transfer the power to this bus, in turn lowering the voltage of the bus.  
+The low voltage violation reported in Year 1, Topology 1 on the buses 103, 154, 3008, 203, 206 and 205 is all due to contingencies occurring in Area 2 of the hypothetical SAVNW system. It was seen that when either of the contingencies SING OPN LIN   10 201-205(\&1), SING OPN LIN   15 205-206(1), or UNIT 206(1) occurs in the system, as all these contingencies are related to the biggest load bus 205 in the system, the branches surrounding the bus gets loaded to transfer the power to this bus, in turn lowering the voltage of the bus.  
 
 For Year 2, Topology 2, the contingency analysis shows the buses reporting the most number of violations are the buses 103 and 154 for contingencies in Area 2 as in Topology 1 along with the contingency 152-153(1). When the outage of the branch 152-153 occurs, the power that was supposed to flow through the branch flows through the connected branches causing the loading in the branches as can be seen from the table \ref{y2t2ol} and hence reporting lower voltages in connected buses. It can be observed that for the rest of the buses reporting lower voltages are the buses to which the branches transferring power to the load bus 205 are connected. 
 
 For Year 3, Topology 3, highest number of voltage violations are reported for Bus 154 followed by Bus 205 and Bus 3008. Similarly for the rest of the buses, there are a high number of voltage violations reported. It can be seen that in Year 3, Topology 4 when the planned  transmission upgrades are complete, the lower voltage violations reported by Buses are considerably reduced by virtue of reduction in loading it has brought to the system. 
-For Year 4, Topology 5, as the load on the system is increasing and there are no new transmission upgrades to support the increased load, the lower voltage violations are still on the rise and in Year 5, Topology 6, the number of violations increases to high numbers for multiple buses with Bus 154 still being the highest reported Bus. 
 
-Studying the buses individually, it can be seen in terms of the Bus 154, not only the bus is a load bus, the branches connected to the bus are low rated branches and it can be seen that as the load increases over the years in the planning horizon, the reactive power support already existing in the bus 154 is not enough to make the bus operate within normal voltage range.
+For Year 4, Topology 5, as the load on the system is increasing and there are no new transmission upgrades to support the increased load, the lower voltage violations are still on the rise, and in Year 5, Topology 6, the number of violations increases to high numbers for multiple buses with Bus 154 still being the highest reported Bus. 
 
-The load bus 205 is the highest loaded Bus in the system, this bus is supplied with power from multiple branches connected to it, as can be seen from the single line diagrams. There is a reactive power support already existing in the Bus, moreover the voltage of the bus is regulated by the generator connected at the Bus 206 to be 0.98 P.U. but still the heavy loading in the bus causes it to operate below emergency rating during contingency conditions. 
+Studying the buses individually, for the Bus 154, not only is the bus 154 a load bus, the branches connecting to the bus are low capacity branches and it can be seen that as the load increases over the years in the planning horizon, the reactive power support already existing in the bus 154 is not enough to make the bus operate within normal voltage range.
 
-In case of the bus 103 connected to the solar generator, in this study the generator is not provided with any reactive power support hence the bus is not able to regulate the voltage to remain within the desired range. 
+The load bus 205 is the highest loaded Bus in the system, this bus is supplied with power from multiple branches connected to it. There is a reactive power support already existing in the Bus and the voltage of the bus is regulated by the generator connected at the Bus 206 to be 0.98 P.U. Even with all the support, it can be seen that the heavy loading in the bus causes it to operate below emergency rating for some contingency cases. 
 
-The highest number of lower voltage limit violation in Area 5 is reported by Bus 3008. The bus 3008 is connected to a load without any reactive support. As the load increases over the years, the reactive power requirement of the load increases, and without any transmission upgrade to support the load results in lower emergency voltage range violation. 
+In case of the bus 103 connected to the solar generator, in this study, the generator is not provided with any reactive power support hence the bus is not able to regulate the voltage to remain within the desired range. 
+
+The highest number of lower voltage limit violation in Area 5 is reported by Bus 3008. The bus 3008 is connected with a load without any reactive support. As the load increases over the years, the reactive power requirement of the load increases, and without any reactive power support to regulate the voltage at the bus results in lower emergency voltage range violation of the Bus 3008. 
 
 
 \chapter{Conculsion}
 \label{conclusion} 
-By conducting contingency analysis on the hypothetical SAVNW system spanning 5 years on for multiple generation and load scenarios addressing the uncertainity in generations and demands to get an overview of the next set of system upgrades studies that would be needed to conducted was assessed.
+Conducting AC contingency calculation on the hypothetical SAVNW system spanning 5 years to test for multiple generation and load scenarios addressing the uncertainity in generations and demands gave an overview of the next set of system upgrade studies that would be needed to be conducted. 
 
-The AC Contingency Calculation is carried out for the Hypothetical SAVNW system to honor the interarea transfer limits and hence each area is assigned a swing generator. The power supplied by the non swing generators remain the same. When a contingency on the area swing generators are tested, the system swing generators balances the load flow by generating the additional power. The solution settings considered in this manner gives a worst-case system operating point to start the planning process. As the hypothetical SAVNW system is a highly loaded system studying the nonoptimal operating point will be beneficial as there are a lot of scope for improvement for the system. 
+The AC Contingency Calculation is carried out for the Hypothetical SAVNW system to honor the interarea transfer limits and hence each area is assigned a swing generator, with the power supplied by the non swing generators remaining the same. In this condition, when a contingency on the area swing generator is tested, the system swing generators balances the load flow by generating the additional power. The solution settings considered in this manner gives a worst-case system operating point to start the planning process. As the hypothetical SAVNW system is a highly loaded system, studying the nonoptimal operating point will be beneficial as there is a lot of scope for improvement for the system. 
 
 Chapter \ref{chap:desc} described the study system and the program used to conduct the AC Contingency calculation and the program used to extract the AC contingency calculation results as excel sheets for post processing. In Chapter \ref{chap:sum}, for the planning horizon, the system topologies studied are described. For all the studied topologies and scenarios, Chapter ~\ref{chap:nonconv} reported the contingencies that did not converge, Chapter ~\ref{chap:ovrld} reported the overloaded branches, Chapter ~\ref{chap:upemvol} reported the upper emergency voltage limit violations, and Chapter ~\ref{chap:lowemvol} reported the lower emergency voltage limit violations.  
 
-For all the topologies and scenarios studied for the system nonconvergence in Chapter ~\ref{chap:nonconv}, it was seen that the nonconvergence is mainly related to serving of the main load area loads that are connected to the buses 205 and 203. The contingencies UNIT 206(1) and SING OPN LIN 205-206(1) caused outage of generator connected at Bus 206 leading to a nonconvergence of load flow. The generator at 206 is serving the highest load in the system connected at Bus 205 and hence loss of this generator leads to a large mismatch in the load flow calculations. The nonconvergence reported in Area 1 due to outage of lines 151-152(1) and 151-152(2) are reported after the addition of generator in Area 2 at Bus 212. The power generated at the bus is transferred to various points in the system by flowing through the ties to Area 1 and then back to Area 2 due to lack of transmission upgrades in Area 2. 
+From Chapter ~\ref{chap:nonconv}, for all the topologies and scenarios studied for the system nonconvergence, it was seen that the nonconvergence is mainly related to serving of the LIGHTCO area loads that are connected to the buses 205 and 203. The contingencies UNIT 206(1) and SING OPN LIN 205-206(1) caused outage of generator connected at Bus 206 leading to a nonconvergence of load flow. The generator at 206 is serving the highest load in the system connected at Bus 205 and hence loss of this generator leads to a large mismatch in the load flow calculations. The nonconvergence reported in Area 1 due to outage of lines 151-152(1) and 151-152(2) are reported after the addition of generator in Area 2 at Bus 212. The power generated at the bus 212 is transferred to various points in the system and in Area 2, by flowing through the ties to Area 1 and to Area 2 due to lack of transmission upgrades in Area 2. 
 
-In Chapter ~\ref{chap:ovrld}, the loading violations most reported is for the branch 3001-3003(1). The branch 3001-3003(1) is connected to the system swing generator and gets loaded heavily as it being one of the branches that enables the power transfer from swing generator to various loads in the system. When the non-swing generator in the area goes out of service, overloading is reported in the branches that are connected to area swing buses. The loading violations reported in Area 1 and Area 2 are due to the rerouted power flow to the loads connected to the buses 205 and 154 when a (N-1) contingency occurs in either of the Areas. In terms of overloading in Area 5, it was seen that when a requirement of system swing generators to serve the load in other areas becomes a necessity, the branches in area 5 being low-capacity ones, reports loading violations. 
+In Chapter ~\ref{chap:ovrld}, the loading violations most reported is for the branch 3001-3003(1). The branch 3001-3003(1) is connected to the system swing generator and gets loaded heavily as it being one of the branches that enables the power transfer from swing generator to various loads in the system. When the non-swing generator in the area goes out of service, overloading is reported in the branches that are connected to area swing buses. The loading violations reported in Area 1 and Area 2 are due to the rerouted power flow to the loads connected to the buses 205 and 154 when a (N-1) contingency occurs in either of the Areas. In terms of overloading in Area 5, it was seen that when a requirement of system swing generators to serve the load in other areas becomes a necessity, the branches in area 5 being low-capacity ones, reports loading violations. The branch reporting the greatest number of overloading violations is the branch 3001-3003(1) followed by the branches 101-151(1), 3001-3003(2), 3003-3005(1), 3003-3005(2) as given in Table \ref{sumovrldv}. 
 
 The Upper emergency voltage limit violations reported in Chapter \ref{chap:upemvol} is on the generator buses 211 and 212. The generators are regulating the voltage at a remote bus and hence reports voltage of greater than 1.1 PU for certain contingencies. 
 
-The Lower emergency voltage limit violation buses are reported in Chapter \ref{chap:lowemvol}. For the non-load buses overloading of branches due to continencies can cause the buses reporting lower voltage violations. And for load buses, as the load increases over the years, corresponding reactive power of the load also increases, causing buses connected to these loads reporting lower voltage violations. In both cases there is a requirement of reactive power support needed to ensure the buses do not violate the lower emergency voltage. As the loading on the system increases in the planning horizon, the reported lower emergency voltage violations increase. The buses reporting the most violations are the load buses 154, 205, and 3008.  
+The Lower emergency voltage limit violation buses are reported in Chapter \ref{chap:lowemvol}. For the non-load buses overloading of branches due to continencies can cause the buses reporting lower voltage violations. And for load buses, as the load increases over the years, corresponding reactive power of the load also increases, causing buses connected to these loads reporting lower voltage violations. In both cases there is a requirement of reactive power support needed to ensure the buses do not violate the lower emergency voltage. As the loading on the system increases in the planning horizon, the reported lower emergency voltage violations increase. The buses reporting the most violations are the load buses 154, 205, and 3008, followed by the solar generator bus 103 as given in Table \ref{sumlowv}. 
 
-The load flow mismatch can not be described as because of lack of generation resources, rather because of lack of transmission resources that can aid the transport of the power generated at various supply resources to the demand loads due lack of transmission lines and reactive power supporting devices. While dealing with the contingencies that are causing the nonconvergence and violations for the system, demand side measures shall be considered from an operational point of view, and from a system planning point of view the need for transmission structure upgrade is essential to ensure the reliable and safe operation of the interconnected system. 
+The load flow mismatch observed for contingency analysis can not be described as because of lack of generation resources, rather because of lack of transmission resources (i.e., lack of transmission lines and reactive power supporting devices) that can aid the transport of the power generated at various supply resources to the demand loads. While dealing with the contingencies that are causing the nonconvergence and violations for the system, demand side measures shall be considered from an operational point of view, and from a system planning point of view the need for transmission structure upgrade is essential to ensure the reliable and safe operation of the interconnected system. 
 
-Detailed transmission planning studies needed to be carried out to determine the upgrades that would be needed to ensure reliable and secure operation of the interconnected system. The future scope of this work is to conduct steady state and transient stability studies to filter out more unstable operating contingencies to be better informed regarding system upgrading requirements. 
+Detailed transmission planning studies needed to be carried out to determine the upgrades that would be needed to ensure reliable and secure operation of the interconnected system. The starting point to analyze for the branches needing capacity expansion and the buses needing reactive power support are given in the Tables \ref{sumovrldv}, \ref{sumlowv}. The future scope of this work is to conduct steady state and transient stability studies to filter out more unstable operating contingencies to be better informed regarding system upgrading requirements. 
 
 
 
 \chapter*{Appendix}
 \addcontentsline{toc}{chapter}{Appendix}
 \label{chapter:app}
+
+\begin{table}[H]
+\caption{Summary of Branch loading violation counts}
+\label{sumovrldv}
+\centering
+\scalebox{0.85}{\begin{tabular}{lr}
+\toprule
+Branch & Overload Count \\
+\midrule
+3001-3003(1) & 509 \\
+101-151(1) & 420 \\
+3001-3003(2) & 374 \\
+3003-3005(1) & 262 \\
+3003-3005(2) & 262 \\
+154-203(1) & 211 \\
+205-206(1) & 168 \\
+154-205(1) & 161 \\
+203-205(1) & 91 \\
+203-205(2) & 91 \\
+153-154(1) & 55 \\
+3005-3007(1) & 50 \\
+153-154(2) & 25 \\
+202-203(1) & 13 \\
+201-204(1) & 12 \\
+204-205(1) & 7 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\caption{Summary of Bus Upper voltage violation counts}
+\label{sumupv}
+\centering
+\scalebox{0.85}{\begin{tabular}{rr}
+\toprule
+Bus & Upper violation counts \\
+\midrule
+211 & 153 \\
+212 & 151 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[H]
+\caption{Summary of Bus Lower voltage violation counts}
+\label{sumlowv}
+\centering
+\scalebox{0.85}{\begin{tabular}{rr}
+\toprule
+Bus & Lower violation counts \\
+\midrule
+154 & 654 \\
+205 & 466 \\
+3008 & 227 \\
+103 & 223 \\
+204 & 132 \\
+153 & 131 \\
+203 & 130 \\
+3006 & 101 \\
+3007 & 100 \\
+3012 & 78 \\
+3009 & 59 \\
+3010 & 54 \\
+202 & 30 \\
+206 & 26 \\
+3018 & 14 \\
+152 & 9 \\
+3005 & 2 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+
+
+
 \begin{table}
 \caption{Contingency case labels and descriptions}
 \label{contdesc}
@@ -1001,7 +1080,7 @@ Scenario & A loading and generation variability tested for a topology. & For yea
 &&\\
 \hline
 &&\\
-Case & A tested contingency case for a studied scenario. & The contingency case SING OPN LIN 1 101-151(1) is a contingency created by open line FROM BUS 101 [NUC-A 21.600] TO BUS 151 [NUCPANT 500.00] CKT 1. All the contingency cases tested for Year 0 to Year 5 are given in Table \ref{contdesc} and ~\ref{contdesc1}. \\[2mm] 
+Case & A tested contingency case for a studied scenario. & The contingency case SING OPN LIN 1 101-151(1) is a contingency created by open line FROM BUS 101 [NUC-A 21.600] TO BUS 151 [NUCPANT 500.00] CKT 1. All the (N-1) contingency cases tested for Year 0 to Year 5 are given in Table \ref{contdesc}. \\[2mm] 
 &&\\
 \hline
 \end{tabular}
