@@ -70,7 +70,7 @@ For each of the studied topologies
       * Year 0, Topology 0 – PSSE contingency study report <br>
       https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/pssecontingency_topology_0%20.pdf <br>
       * Year 1, Topology 1 – PSSE contingency study report <br>
-      https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/pssecontingency_topology_1.pdf <br>
+      [https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/pssecontingency_topology_1.pdf](https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/pssecontingency_topology_1.pdf) <br>
       * Year 2, Topology 2 – PSSE contingency study report <br>
       https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/pssecontingency_topology_2.pdf <br>
       * Year 3, Topology 3 – PSSE contingency study report <br>
