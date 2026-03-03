@@ -7561,11 +7561,25 @@ The contingency file gives the tested contingencies <br/></p>
 </div>
 </div>
 </div>
-</div>import psspy
-psspy.case(r"""savnw.sav""")
-psspy.fdns([0,1,0,0,0,0,99,0])
-psspy.dfax_2([1,1,0],r"""savnw.sub""",r"""savnw.mon""",r"""savnw.con""",r"""savnw.dfx""")
-psspy.accc_with_dsp_3(0.1,[0,0,0,0,1,2,0,0,0,2,0],r"""CON""",r"""savnw.dfx""",r"""savnw.acc""","","","")
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=f8c98a9b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">psspy</span>
+<span class="n">psspy</span><span class="o">.</span><span class="n">case</span><span class="p">(</span><span class="sa">r</span><span class="s2">"""savnw.sav"""</span><span class="p">)</span>
+<span class="n">psspy</span><span class="o">.</span><span class="n">fdns</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">99</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">psspy</span><span class="o">.</span><span class="n">dfax_2</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="sa">r</span><span class="s2">"""savnw.sub"""</span><span class="p">,</span><span class="sa">r</span><span class="s2">"""savnw.mon"""</span><span class="p">,</span><span class="sa">r</span><span class="s2">"""savnw.con"""</span><span class="p">,</span><span class="sa">r</span><span class="s2">"""savnw.dfx"""</span><span class="p">)</span>
+<span class="n">psspy</span><span class="o">.</span><span class="n">accc_with_dsp_3</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="sa">r</span><span class="s2">"""CON"""</span><span class="p">,</span><span class="sa">r</span><span class="s2">"""savnw.dfx"""</span><span class="p">,</span><span class="sa">r</span><span class="s2">"""savnw.acc"""</span><span class="p">,</span><span class="s2">""</span><span class="p">,</span><span class="s2">""</span><span class="p">,</span><span class="s2">""</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=be90c542">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -7577,17 +7591,31 @@ psspy.accc_with_dsp_3(0.1,[0,0,0,0,1,2,0,0,0,2,0],r"""CON""",r"""savnw.dfx""",r"
 </div>
 </div>
 </div>
-</div>import pssexcel
-# xlsfile = out.xlsx file to export flows for all elements with overloadreport = False
-# xlsfile = savnwacc.xlsx file to export flows for elements with branch flow greater than 100.0 (flowlimit=100.0) with overloadreport = True
-pssexcel.accc('savnw.acc', ['s','b'], colabel='',stype='contingency', busmsm=0.5, sysmsm=5.0,
-                rating='a', namesplit=False,xlsfile='out.xlsx', sheet='', overwritesheet=True, show=False, ratecon='b',
-                baseflowvio=False,basevoltvio=False, flowlimit=100.0, flowchange=0.0, voltchange=0.0,swdrating='a',
-                swdratecon='b',baseswdflowvio=False,basenodevoltvio=False,overloadreport=False)
-pssexcel.accc('savnw.acc', ['s','b','v'], colabel='',stype='contingency', busmsm=0.5, sysmsm=5.0,
-                rating='a', namesplit=False,xlsfile='savnwacc.xlsx', sheet='', overwritesheet=True, show=False, ratecon='b',
-                baseflowvio=False,basevoltvio=False, flowlimit=100.0, flowchange=0.0, voltchange=0.0,swdrating='a',
-                swdratecon='b',baseswdflowvio=False,basenodevoltvio=False,overloadreport=True)
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=44e3e483">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pssexcel</span>
+<span class="c1"># xlsfile = out.xlsx file to export flows for all elements with overloadreport = False</span>
+<span class="c1"># xlsfile = savnwacc.xlsx file to export flows for elements with branch flow greater than 100.0 (flowlimit=100.0) with overloadreport = True</span>
+<span class="n">pssexcel</span><span class="o">.</span><span class="n">accc</span><span class="p">(</span><span class="s1">'savnw.acc'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'s'</span><span class="p">,</span><span class="s1">'b'</span><span class="p">],</span> <span class="n">colabel</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span><span class="n">stype</span><span class="o">=</span><span class="s1">'contingency'</span><span class="p">,</span> <span class="n">busmsm</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">sysmsm</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+                <span class="n">rating</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">namesplit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">xlsfile</span><span class="o">=</span><span class="s1">'out.xlsx'</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">overwritesheet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ratecon</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span>
+                <span class="n">baseflowvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">basevoltvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flowlimit</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">flowchange</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">voltchange</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">swdrating</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span>
+                <span class="n">swdratecon</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span><span class="n">baseswdflowvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">basenodevoltvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">overloadreport</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pssexcel</span><span class="o">.</span><span class="n">accc</span><span class="p">(</span><span class="s1">'savnw.acc'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'s'</span><span class="p">,</span><span class="s1">'b'</span><span class="p">,</span><span class="s1">'v'</span><span class="p">],</span> <span class="n">colabel</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span><span class="n">stype</span><span class="o">=</span><span class="s1">'contingency'</span><span class="p">,</span> <span class="n">busmsm</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">sysmsm</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+                <span class="n">rating</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">namesplit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">xlsfile</span><span class="o">=</span><span class="s1">'savnwacc.xlsx'</span><span class="p">,</span> <span class="n">sheet</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">overwritesheet</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ratecon</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span>
+                <span class="n">baseflowvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">basevoltvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">flowlimit</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">flowchange</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">voltchange</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">swdrating</span><span class="o">=</span><span class="s1">'a'</span><span class="p">,</span>
+                <span class="n">swdratecon</span><span class="o">=</span><span class="s1">'b'</span><span class="p">,</span><span class="n">baseswdflowvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">basenodevoltvio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">overloadreport</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6b62d570">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
