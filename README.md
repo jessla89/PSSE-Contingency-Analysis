@@ -19,3 +19,12 @@ For each of the studied topologies
   * Year 5, Topology 6 - contingency analysis <br>
     https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/Contingency_Topology_6.html<br>
 
+2.	Overload violation analysis 
+
+   •	Year 0, Topology 0 – Overload violations  
+   •	Year 1, Topology 1 – Overload violations  
+   •	Year 2, Topology 2 – Overload violations  
+   •	Year 3, Topology 3 – Overload violations  
+   •	Year 3, Topology 4 – Overload violations  
+   •	Year 4, Topology 5 – Overload violations  
+   •	Year 5, Topology 6 – Overload violations  
