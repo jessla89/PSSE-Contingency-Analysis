@@ -32,3 +32,18 @@ For each of the studied topologies
    https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/overloading_Topology_5.html <br>
   * Year 5, Topology 6 – Overload violations   <br>
    https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/overloading_Topology_6.html <br>
+
+3.	Lower limit voltage violation analysis 
+
+  * Year 1, Topology 1 – Lower limit voltage violations  <br>
+  https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/lower_limit__violation_Topology_1.html  <br>
+  * Year 2, Topology 2 – Lower limit voltage violations  <br>
+  https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/lower_limit__violation_Topology_1.html  <br>
+  * Year 3, Topology 3 – Lower limit voltage violations <br>
+  https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/lower_limit__violation_Topology_1.html  <br>
+  * Year 3, Topology 4 – Lower limit voltage violations <br>
+  https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/lower_limit__violation_Topology_1.html  <br>
+  * Year 4, Topology 5 – Lower limit voltage violations <br>
+  https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/lower_limit__violation_Topology_1.html  <br>
+  * Year 5, Topology 6 – Lower limit voltage violations <br>
+  https://htmlpreview.github.io/?https://github.com/jessla89/PSSE-Contingency-Analysis/blob/main/lower_limit__violation_Topology_1.html  <br>
