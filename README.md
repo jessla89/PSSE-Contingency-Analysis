@@ -1,5 +1,6 @@
-In this repository python programs are developed to conduct AC contingency calculation and to export AC contingency solution output file as excel is given. The exported solutions are then analysed to extract the branch overload and bus voltage range violations. 
-
+In this repository AC Contingency calculation is carried out on the hypothetical SAVNW system for 7 topologies spanning 5 years to analyse the branch overload and bus voltage range violations.
+The final summary report is 
+To arrive at the summary report, detailed analysis was carried out for each of the studied topologies. The links to the contingency analysis, overload violation analysis, Lower limit voltage violation analysis, upper limit voltage violation analysis conducted on the Jupyter notebooks for each of the topologies along with the study reports developed corresponding to each of the studied topologies are given below. 
 
 
 For each of the studied topologies 
